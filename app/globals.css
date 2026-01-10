@@ -1,7 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
-  font-family: var(--font-geist-sans);
+  background-color: #020617;
+  color: #ffffff;
 }
