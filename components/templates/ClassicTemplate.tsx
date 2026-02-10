@@ -8,7 +8,7 @@ export const ClassicTemplate = ({ data }: ClassicTemplateProps) => {
   const { personalInfo, experience, education, projects, skills } = data;
 
   return (
-    <div className="bg-white text-gray-900 w-[210mm] min-h-[297mm] p-12 shadow-2xl">
+    <div className="bg-white text-gray-900 w-full h-full p-10">
       {/* Header */}
       <div className="border-b-2 border-gray-800 pb-4 mb-6">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
