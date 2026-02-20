@@ -19,7 +19,7 @@ import {
 
 interface BuilderFormProps {
   resumeData: ResumeData;
-  updatePersonalInfo: (field: keyof PersonalInfo, value: string) => void;
+  updatePersonalInfo: (field: keyof PersonalInfo, value: string | boolean) => void;
   addExperience: () => void;
   updateExperience: (id: string, field: keyof Experience, value: any) => void;
   deleteExperience: (id: string) => void;

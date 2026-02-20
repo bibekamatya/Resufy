@@ -11,16 +11,23 @@ export const ModernTemplate = ({ data }: ModernTemplateProps) => {
     <div className="bg-white text-gray-900 w-full h-full p-8 print:p-4">
       {/* Header with two-column layout */}
       <div className="flex justify-between items-start mb-8 print:mb-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 print:text-2xl print:mb-1">
-            {personalInfo.fullName}
-          </h1>
-          {personalInfo.email && (
-            <div className="text-gray-700">{personalInfo.email}</div>
+        <div className="flex items-start gap-4">
+          {personalInfo.photoUrl && (personalInfo.showPhoto ?? true) && (
+            <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 border-gray-300">
+              <img src={personalInfo.photoUrl} alt={personalInfo.fullName} className="h-full w-full object-cover" />
+            </div>
           )}
-          {personalInfo.phone && (
-            <div className="text-gray-700">{personalInfo.phone}</div>
-          )}
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2 print:text-2xl print:mb-1">
+              {personalInfo.fullName}
+            </h1>
+            {personalInfo.email && (
+              <div className="text-gray-700">{personalInfo.email}</div>
+            )}
+            {personalInfo.phone && (
+              <div className="text-gray-700">{personalInfo.phone}</div>
+            )}
+          </div>
         </div>
         <div className="text-right">
           {personalInfo.location && (

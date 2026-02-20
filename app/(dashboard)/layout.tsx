@@ -13,7 +13,7 @@ interface ProfileContextType {
   profiles: ResumeProfile[];
   currentProfileId: string;
   resumeData: ResumeData;
-  setResumeData: (data: ResumeData) => void;
+  setResumeData: React.Dispatch<React.SetStateAction<ResumeData>>;
   hasChanges: boolean;
   setHasChanges: (value: boolean) => void;
   saving: boolean;
@@ -23,6 +23,8 @@ interface ProfileContextType {
   deleteProfile: (profileId: string) => void;
   renameProfile: (profileId: string, name: string) => void;
   setDefaultProfile: (profileId: string) => void;
+  duplicateProfile: (profileId: string) => void;
+  shareProfile: (profileId: string) => void;
 }
 
 const ProfileContext = createContext<ProfileContextType | null>(null);

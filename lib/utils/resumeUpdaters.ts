@@ -4,7 +4,7 @@ export const createResumeUpdaters = (
   setResumeData: React.Dispatch<React.SetStateAction<ResumeData>>
 ) => {
   // Update personal info fields
-  const updatePersonalInfo = (field: keyof PersonalInfo, value: string) => {
+  const updatePersonalInfo = (field: keyof PersonalInfo, value: string | boolean) => {
     setResumeData((prev) => ({
       ...prev,
       personalInfo: { ...prev.personalInfo, [field]: value },
@@ -133,21 +133,6 @@ export const createResumeUpdaters = (
     setResumeData((prev) => ({
       ...prev,
       skills: prev.skills.filter((_, i) => i !== index),
-    }));
-  };
-
-  // Update visibility
-  const updateVisibility = (section: keyof NonNullable<ResumeData['visibility']>, value: boolean) => {
-    setResumeData((prev) => ({
-      ...prev,
-      visibility: {
-        ...prev.visibility,
-        experience: prev.visibility?.experience ?? true,
-        education: prev.visibility?.education ?? true,
-        projects: prev.visibility?.projects ?? true,
-        skills: prev.visibility?.skills ?? true,
-        [section]: value,
-      },
     }));
   };
 

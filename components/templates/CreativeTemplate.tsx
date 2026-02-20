@@ -13,6 +13,11 @@ export const CreativeTemplate = ({ data }: CreativeTemplateProps) => {
       <div className="flex mb-6">
         {/* Left Colored Sidebar */}
         <div className="w-1/4 bg-linear-to-b from-blue-600 to-blue-700 text-white p-5 rounded-l-xl">
+          {personalInfo.photoUrl && (personalInfo.showPhoto ?? true) && (
+            <div className="relative h-24 w-24 mx-auto mb-4 overflow-hidden rounded-full border-4 border-white">
+              <img src={personalInfo.photoUrl} alt={personalInfo.fullName} className="h-full w-full object-cover" />
+            </div>
+          )}
           <div className="mb-6">
             <h1 className="text-xl font-bold mb-2">{personalInfo.fullName}</h1>
             {personalInfo.email && (

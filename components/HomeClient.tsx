@@ -136,11 +136,11 @@ export function HomeClient() {
             <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-blue-100 opacity-50 blur-3xl transition-all group-hover:scale-150"></div>
             <div className="relative">
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/40 transition-transform group-hover:scale-110">
-                <Eye className="h-7 w-7 text-white" />
+                <FileText className="h-7 w-7 text-white" />
               </div>
-              <h3 className="mb-3 text-xl font-bold">Live Preview</h3>
+              <h3 className="mb-3 text-xl font-bold">Multiple Profiles</h3>
               <p className="text-gray-600">
-                See your resume update in real-time as you type. What you see is exactly what you get.
+                Create, rename, delete, and duplicate resume profiles. Set default and share with others.
               </p>
             </div>
           </div>
@@ -149,11 +149,11 @@ export function HomeClient() {
             <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-green-100 opacity-50 blur-3xl transition-all group-hover:scale-150"></div>
             <div className="relative">
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg shadow-green-500/40 transition-transform group-hover:scale-110">
-                <FileText className="h-7 w-7 text-white" />
+                <Eye className="h-7 w-7 text-white" />
               </div>
-              <h3 className="mb-3 text-xl font-bold">ATS-Friendly Templates</h3>
+              <h3 className="mb-3 text-xl font-bold">Visibility Controls</h3>
               <p className="text-gray-600">
-                Choose from 6 professionally designed templates optimized for Applicant Tracking Systems.
+                Toggle visibility for individual entries. Show or hide experience, projects, skills, and more.
               </p>
             </div>
           </div>
@@ -164,9 +164,9 @@ export function HomeClient() {
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg shadow-purple-500/40 transition-transform group-hover:scale-110">
                 <Download className="h-7 w-7 text-white" />
               </div>
-              <h3 className="mb-3 text-xl font-bold">Instant PDF Export</h3>
+              <h3 className="mb-3 text-xl font-bold">6 PDF Templates</h3>
               <p className="text-gray-600">
-                Download your resume as a professional PDF with one click. Perfect formatting guaranteed.
+                Classic, Modern, Compact, Creative, Academic, Balanced. All ATS-friendly with clean PDF export.
               </p>
             </div>
           </div>
@@ -177,9 +177,9 @@ export function HomeClient() {
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg shadow-orange-500/40 transition-transform group-hover:scale-110">
                 <Zap className="h-7 w-7 text-white" />
               </div>
-              <h3 className="mb-3 text-xl font-bold">Lightning Fast</h3>
+              <h3 className="mb-3 text-xl font-bold">ATS Scoring</h3>
               <p className="text-gray-600">
-                Build your resume in under 2 minutes. No complicated forms or endless pages.
+                Real-time ATS optimization with keyword suggestions. Get instant feedback to improve your resume.
               </p>
             </div>
           </div>
@@ -188,11 +188,11 @@ export function HomeClient() {
             <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-pink-100 opacity-50 blur-3xl transition-all group-hover:scale-150"></div>
             <div className="relative">
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-pink-600 shadow-lg shadow-pink-500/40 transition-transform group-hover:scale-110">
-                <Shield className="h-7 w-7 text-white" />
+                <Users className="h-7 w-7 text-white" />
               </div>
-              <h3 className="mb-3 text-xl font-bold">Privacy First</h3>
+              <h3 className="mb-3 text-xl font-bold">Share Resumes</h3>
               <p className="text-gray-600">
-                Your data is stored securely. We never share your information with third parties.
+                Generate public links to share your resume for feedback. Perfect for getting input from mentors.
               </p>
             </div>
           </div>
@@ -201,11 +201,11 @@ export function HomeClient() {
             <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-teal-100 opacity-50 blur-3xl transition-all group-hover:scale-150"></div>
             <div className="relative">
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-lg shadow-teal-500/40 transition-transform group-hover:scale-110">
-                <Clock className="h-7 w-7 text-white" />
+                <Sparkles className="h-7 w-7 text-white" />
               </div>
-              <h3 className="mb-3 text-xl font-bold">Auto-Save</h3>
+              <h3 className="mb-3 text-xl font-bold">Dark Mode & More</h3>
               <p className="text-gray-600">
-                Never lose your progress. Your resume is automatically saved as you work.
+                Dark mode toggle, skills autocomplete, photo support, and secure authentication with Supabase.
               </p>
             </div>
           </div>
@@ -310,44 +310,6 @@ export function HomeClient() {
               </div>
             </button>
           ))}
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="bg-gradient-to-b from-white to-gray-50 py-20 sm:py-32">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="mb-16 text-center">
-            <h2 className="mb-4 text-4xl font-bold">Loved by Job Seekers</h2>
-            <p className="mx-auto max-w-2xl text-lg text-gray-600">
-              See what our users have to say about Resufy
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-3">
-            {[
-              { name: 'Sarah Johnson', role: 'Software Engineer', text: 'Landed my dream job at Google! The ATS-friendly templates made all the difference.' },
-              { name: 'Michael Chen', role: 'Product Manager', text: 'Super easy to use and the live preview saved me so much time. Highly recommend!' },
-              { name: 'Emily Davis', role: 'UX Designer', text: 'Beautiful templates and completely free. Got 3 interview calls in the first week!' }
-            ].map((testimonial, i) => (
-              <div key={i} className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-                <div className="mb-4 flex gap-1">
-                  {[...Array(5)].map((_, j) => (
-                    <Star key={j} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <p className="mb-4 text-gray-700">&ldquo;{testimonial.text}&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-sm font-semibold text-white">
-                    {testimonial.name.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                    <div className="text-sm text-gray-600">{testimonial.role}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 

@@ -7,6 +7,7 @@ export interface PersonalInfo {
   website?: string;
   summary: string;
   photoUrl?: string;
+  showPhoto?: boolean;
 }
 
 export interface Experience {

@@ -1,9 +1,11 @@
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
 import { ResumeData } from "@/lib/types";
 
 const styles = StyleSheet.create({
   page: { padding: 30, fontFamily: "Helvetica" },
-  header: { marginBottom: 15 },
+  header: { marginBottom: 15, flexDirection: "row", gap: 10, alignItems: "center" },
+  photo: { width: 50, height: 50, borderRadius: 5, objectFit: "cover" },
+  headerText: { flex: 1 },
   name: { fontSize: 24, fontWeight: "bold" },
   contact: { fontSize: 8, color: "#555", marginTop: 5 },
   summary: { fontSize: 9, lineHeight: 1.4, marginTop: 10, padding: 10, backgroundColor: "#f8f8f8" },
@@ -16,7 +18,7 @@ const styles = StyleSheet.create({
   bulletText: { fontSize: 8, marginLeft: 5, flex: 1 },
 });
 
-export const PDFBalancedTemplate = ({ data }: { data: ResumeData }) => {
+export const PDFBalanced = ({ data }: { data: ResumeData }) => {
   const visibleExperience = data.experience.filter(exp => exp.visible !== false);
   const visibleSkills = data.skills.filter(skill => (data.skillsVisibility?.[skill] ?? true));
 
@@ -24,13 +26,18 @@ export const PDFBalancedTemplate = ({ data }: { data: ResumeData }) => {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Text style={styles.name}>{data.personalInfo.fullName}</Text>
-          <Text style={styles.contact}>
-            {data.personalInfo.email} | {data.personalInfo.phone} | {data.personalInfo.location}
-          </Text>
-          {data.personalInfo.summary && (
-            <Text style={styles.summary}>{data.personalInfo.summary}</Text>
+          {data.personalInfo.photoUrl && (data.personalInfo.showPhoto ?? true) && (
+            <Image src={data.personalInfo.photoUrl} style={styles.photo} />
           )}
+          <View style={styles.headerText}>
+            <Text style={styles.name}>{data.personalInfo.fullName}</Text>
+            <Text style={styles.contact}>
+              {data.personalInfo.email} | {data.personalInfo.phone} | {data.personalInfo.location}
+            </Text>
+            {data.personalInfo.summary && (
+              <Text style={styles.summary}>{data.personalInfo.summary}</Text>
+            )}
+          </View>
         </View>
 
         {visibleExperience.length > 0 && (

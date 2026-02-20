@@ -11,23 +11,32 @@ export const BalancedTemplate = ({ data }: BalancedTemplateProps) => {
     <div className="bg-white text-gray-900 w-full h-full p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-1">
-          {personalInfo.fullName}
-        </h1>
-        <div className="flex flex-wrap gap-3 text-gray-600 mb-2">
-          {personalInfo.email && <span>{personalInfo.email}</span>}
-          {personalInfo.phone && <span>•</span>}
-          {personalInfo.phone && <span>{personalInfo.phone}</span>}
-          {personalInfo.location && <span>•</span>}
-          {personalInfo.location && <span>{personalInfo.location}</span>}
-        </div>
-        {(personalInfo.linkedin || personalInfo.website) && (
-          <div className="flex flex-wrap gap-3 text-blue-600">
-            {personalInfo.linkedin && <span>{personalInfo.linkedin}</span>}
-            {personalInfo.linkedin && personalInfo.website && <span>•</span>}
-            {personalInfo.website && <span>{personalInfo.website}</span>}
+        <div className="flex items-start gap-4">
+          {personalInfo.photoUrl && (personalInfo.showPhoto ?? true) && (
+            <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 border-gray-300">
+              <img src={personalInfo.photoUrl} alt={personalInfo.fullName} className="h-full w-full object-cover" />
+            </div>
+          )}
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">
+              {personalInfo.fullName}
+            </h1>
+            <div className="flex flex-wrap gap-3 text-gray-600 mb-2">
+              {personalInfo.email && <span>{personalInfo.email}</span>}
+              {personalInfo.phone && <span>•</span>}
+              {personalInfo.phone && <span>{personalInfo.phone}</span>}
+              {personalInfo.location && <span>•</span>}
+              {personalInfo.location && <span>{personalInfo.location}</span>}
+            </div>
+            {(personalInfo.linkedin || personalInfo.website) && (
+              <div className="flex flex-wrap gap-3 text-blue-600">
+                {personalInfo.linkedin && <span>{personalInfo.linkedin}</span>}
+                {personalInfo.linkedin && personalInfo.website && <span>•</span>}
+                {personalInfo.website && <span>{personalInfo.website}</span>}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-8">

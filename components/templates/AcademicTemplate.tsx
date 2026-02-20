@@ -11,6 +11,11 @@ export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
     <div className="bg-white text-gray-900 w-full h-full p-10">
       {/* Header */}
       <div className="text-center mb-8 border-b border-gray-300 pb-6">
+        {personalInfo.photoUrl && (personalInfo.showPhoto ?? true) && (
+          <div className="relative h-24 w-24 mx-auto mb-4 overflow-hidden rounded-full border-2 border-gray-300">
+            <img src={personalInfo.photoUrl} alt={personalInfo.fullName} className="h-full w-full object-cover" />
+          </div>
+        )}
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           {personalInfo.fullName}
         </h1>

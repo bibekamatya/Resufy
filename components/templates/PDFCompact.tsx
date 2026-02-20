@@ -1,9 +1,11 @@
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
 import { ResumeData } from "@/lib/types";
 
 const styles = StyleSheet.create({
   page: { padding: 25, fontSize: 9, fontFamily: "Helvetica" },
-  header: { marginBottom: 10, borderBottom: "2pt solid #000", paddingBottom: 8 },
+  header: { marginBottom: 10, borderBottom: "2pt solid #000", paddingBottom: 8, flexDirection: "row", gap: 8, alignItems: "center" },
+  photo: { width: 40, height: 40, borderRadius: 20, objectFit: "cover" },
+  headerText: { flex: 1 },
   name: { fontSize: 20, fontWeight: "bold" },
   contact: { fontSize: 8, color: "#333", marginTop: 3 },
   grid: { flexDirection: "row", gap: 15 },
@@ -18,7 +20,7 @@ const styles = StyleSheet.create({
   bulletText: { fontSize: 8, marginLeft: 5, flex: 1 },
 });
 
-export const PDFCompactTemplate = ({ data }: { data: ResumeData }) => {
+export const PDFCompact = ({ data }: { data: ResumeData }) => {
   const visibleExperience = data.experience.filter(exp => exp.visible !== false);
   const visibleProjects = data.projects.filter(proj => proj.visible !== false);
   const visibleSkills = data.skills.filter(skill => (data.skillsVisibility?.[skill] ?? true));
@@ -27,10 +29,15 @@ export const PDFCompactTemplate = ({ data }: { data: ResumeData }) => {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Text style={styles.name}>{data.personalInfo.fullName}</Text>
-          <Text style={styles.contact}>
-            {data.personalInfo.email} | {data.personalInfo.phone} | {data.personalInfo.location}
-          </Text>
+          {data.personalInfo.photoUrl && (data.personalInfo.showPhoto ?? true) && (
+            <Image src={data.personalInfo.photoUrl} style={styles.photo} />
+          )}
+          <View style={styles.headerText}>
+            <Text style={styles.name}>{data.personalInfo.fullName}</Text>
+            <Text style={styles.contact}>
+              {data.personalInfo.email} | {data.personalInfo.phone} | {data.personalInfo.location}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.grid}>
