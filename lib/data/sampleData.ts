@@ -8,6 +8,7 @@ export const sampleResumeData: ResumeData = {
     location: "Los Angeles, CA",
     linkedin: "linkedin.com/in/marcusrodriguez",
     website: "marcusrodriguez.tech",
+    photoUrl: "",
     summary:
       "Tech Lead with 8+ years of experience in building scalable web applications and leading distributed engineering teams. Specialized in cloud infrastructure, DevOps practices, and mentoring developers. Passionate about creating efficient development processes and building products that make an impact.",
   },
@@ -20,6 +21,7 @@ export const sampleResumeData: ResumeData = {
       startDate: "2021-09",
       endDate: "",
       current: true,
+      visible: true,
       description: [
         "Manage a team of 12 engineers working on cloud infrastructure products",
         "Oversaw migration of monolith to microservices, reducing downtime by 99.9%",
@@ -36,6 +38,7 @@ export const sampleResumeData: ResumeData = {
       startDate: "2019-04",
       endDate: "2021-08",
       current: false,
+      visible: true,
       description: [
         "Designed and implemented high-throughput API serving 2M+ requests daily",
         "Built real-time notification system processing 10K events per second",
@@ -52,6 +55,7 @@ export const sampleResumeData: ResumeData = {
       startDate: "2016-07",
       endDate: "2019-03",
       current: false,
+      visible: true,
       description: [
         "Developed gaming platform with 500K+ registered users",
         "Built real-time multiplayer functionality using WebSockets",
@@ -114,6 +118,7 @@ export const sampleResumeData: ResumeData = {
         "Prometheus",
       ],
       link: "github.com/marcus/devops-framework",
+      visible: true,
     },
     {
       id: "proj2",
@@ -128,6 +133,7 @@ export const sampleResumeData: ResumeData = {
         "Grafana",
       ],
       link: "github.com/marcus/autoscale-manager",
+      visible: true,
     },
     {
       id: "proj3",
@@ -136,6 +142,8 @@ export const sampleResumeData: ResumeData = {
         "AI-powered tool that analyzes pull requests and suggests improvements, adopted by 200+ developers across the organization.",
       technologies: ["Python", "React", "OpenAI API", "PostgreSQL", "FastAPI"],
       link: "github.com/marcus/code-review-ai",
+      visible: true,
     },
   ],
+  skillsVisibility: {},
 };

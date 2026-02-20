@@ -8,11 +8,11 @@ export const ModernTemplate = ({ data }: ModernTemplateProps) => {
   const { personalInfo, experience, education, projects, skills } = data;
 
   return (
-    <div className="bg-white text-gray-900 w-full h-full p-8">
+    <div className="bg-white text-gray-900 w-full h-full p-8 print:p-4">
       {/* Header with two-column layout */}
-      <div className="flex justify-between items-start mb-8">
+      <div className="flex justify-between items-start mb-8 print:mb-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2 print:text-2xl print:mb-1">
             {personalInfo.fullName}
           </h1>
           {personalInfo.email && (
@@ -35,9 +35,9 @@ export const ModernTemplate = ({ data }: ModernTemplateProps) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-8">
+      <div className="grid grid-cols-3 gap-8 print:gap-4">
         {/* Left Column (2/3 width) */}
-        <div className="col-span-2 space-y-6">
+        <div className="col-span-2 space-y-6 print:space-y-3">
           {/* Summary */}
           {personalInfo.summary && (
             <div className="mb-4">
@@ -131,7 +131,7 @@ export const ModernTemplate = ({ data }: ModernTemplateProps) => {
         </div>
 
         {/* Right Column (1/3 width) */}
-        <div className="space-y-6">
+        <div className="space-y-6 print:space-y-3">
           {/* Education */}
           {education.length > 0 && (
             <div>

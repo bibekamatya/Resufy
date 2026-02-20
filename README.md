@@ -8,11 +8,16 @@ A modern, dynamic resume builder with live preview and PDF export. Create profes
 
 ## ✨ Features
 
+- 🔐 **Authentication** - Secure login with Supabase
+- 📁 **Multiple Profiles** - Create, rename, delete, and duplicate resume profiles
 - 📝 **Dynamic Form Editor** - Add, edit, and remove sections in real-time
-- 👁️ **Live Preview** - See changes instantly as you type
-- 🎨 **Multiple Templates** - Choose from Classic and Modern designs
-- 📄 **PDF Export** - Download your resume as a professional PDF
-- 💾 **Auto-save** - Your data is saved automatically in browser
+- 👁️ **Visibility Controls** - Toggle visibility for individual entries
+- 🎨 **6 Templates** - Classic, Modern, Compact, Creative, Academic, Balanced
+- 📄 **PDF Export** - Clean PDF downloads with react-pdf
+- 🎯 **ATS Scoring** - Real-time ATS optimization with keyword suggestions
+- 🔗 **Share Resumes** - Generate public links for feedback
+- 🌙 **Dark Mode** - Toggle between light and dark themes
+- 💡 **Skills Autocomplete** - Smart suggestions from common skills
 - 📱 **Responsive** - Works on desktop and mobile devices
 
 ## 🛠️ Tech Stack
@@ -20,13 +25,15 @@ A modern, dynamic resume builder with live preview and PDF export. Create profes
 - **Next.js 15** - React framework with App Router
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first styling
-- **jsPDF** - PDF generation
-- **Local Storage** - Client-side data persistence
+- **Supabase** - Authentication and database
+- **react-pdf** - PDF generation
+- **Lucide Icons** - Icon library
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js 18+ installed
+- Supabase account
 
 ### Installation
 
@@ -41,42 +48,54 @@ cd ResuCraft
 npm install
 ```
 
-3. **Run the development server**
+3. **Set up environment variables**
+Create `.env.local` with your Supabase credentials:
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+4. **Run the development server**
 ```bash
 npm run dev
 ```
 
-4. **Open your browser**
+5. **Open your browser**
 Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 📁 Project Structure
 
 ```
-resucraft/
-├── app/                    # Next.js App Router
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Home page
-├── components/            # React components
-│   ├── Editor.tsx         # Form editor
-│   ├── Preview.tsx        # Live preview
-│   └── templates/         # Resume templates
-├── hooks/                 # Custom React hooks
-├── lib/                   # Utilities and types
-│   ├── types.ts          # TypeScript types
-│   └── initialData.ts    # Sample data
-└── public/               # Static assets
+resufy/
+├── app/
+│   ├── (dashboard)/       # Protected routes
+│   │   ├── builder/       # Form editor
+│   │   └── resume/        # Preview & export
+│   ├── share/[id]/        # Public share page
+│   └── globals.css        # Global styles
+├── components/
+│   ├── forms/             # Form components
+│   ├── templates/         # HTML & PDF templates
+│   └── ui/                # UI components
+├── lib/
+│   ├── utils/             # Utilities
+│   ├── data/              # Static data
+│   └── types.ts           # TypeScript types
+└── middleware.ts          # Auth middleware
 ```
 
 ## 🎯 Roadmap
 
-- [x] Project setup
-- [ ] Form editor components
-- [ ] Live preview
-- [ ] Classic template
-- [ ] Modern template
-- [ ] PDF export
-- [ ] Local storage integration
+- [x] Authentication with Supabase
+- [x] Multiple resume profiles
+- [x] Form editor with all sections
+- [x] Visibility toggles
+- [x] 6 resume templates
+- [x] PDF export with react-pdf
+- [x] ATS scoring system
+- [x] Share functionality
+- [x] Dark mode
+- [x] Skills autocomplete
 
 ## 👨💻 Author
 

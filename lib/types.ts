@@ -6,6 +6,7 @@ export interface PersonalInfo {
   linkedin?: string;
   website?: string;
   summary: string;
+  photoUrl?: string;
 }
 
 export interface Experience {
@@ -17,6 +18,7 @@ export interface Experience {
   endDate: string;
   current: boolean;
   description: string[];
+  visible?: boolean;
 }
 
 export interface Education {
@@ -36,6 +38,24 @@ export interface Project {
   description: string;
   technologies: string[];
   link?: string;
+  visible?: boolean;
+}
+
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  date: string;
+  credentialId?: string;
+  link?: string;
+  visible?: boolean;
+}
+
+export interface Language {
+  id: string;
+  name: string;
+  proficiency: string;
+  visible?: boolean;
 }
 
 export interface ResumeData {
@@ -44,6 +64,19 @@ export interface ResumeData {
   education: Education[];
   skills: string[];
   projects: Project[];
+  certifications?: Certification[];
+  languages?: Language[];
+  skillsVisibility?: Record<string, boolean>;
+}
+
+export interface ResumeProfile {
+  id: string;
+  user_id: string;
+  name: string;
+  data: ResumeData;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export type TemplateType =
