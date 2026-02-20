@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { ResumeProfile } from "@/lib/types";
-import { Plus, Check, Trash2, Edit2, Star, Copy, Share2 } from "lucide-react";
+import { Plus, Check, Trash2, Edit2, Star, Copy, Share2, MoreVertical } from "lucide-react";
+import { Dialog } from "./Dialog";
 
 interface ProfileSelectorProps {
   profiles: ResumeProfile[];
@@ -31,6 +32,8 @@ export const ProfileSelector = ({
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState<{ show: boolean; profileId: string | null }>({ show: false, profileId: null });
 
   const handleCreate = () => {
     if (newName.trim()) {
@@ -72,7 +75,7 @@ export const ProfileSelector = ({
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 group">
                 <button
                   onClick={() => onSelectProfile(profile.id)}
                   className={`flex-1 text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${
@@ -81,56 +84,90 @@ export const ProfileSelector = ({
                       : "hover:bg-gray-50 text-gray-700"
                   }`}
                 >
-                  {profile.is_default && <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />}
+                  {profile.is_default ? (
+                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                  ) : (
+                    <Star className="h-3 w-3 text-gray-300" />
+                  )}
                   <span className="flex-1 truncate">{profile.name}</span>
                   {currentProfileId === profile.id && <Check className="h-4 w-4" />}
                 </button>
-                <button
-                  onClick={() => {
-                    setEditingId(profile.id);
-                    setEditName(profile.name);
-                  }}
-                  className="p-1.5 hover:bg-gray-100 rounded"
-                  title="Rename"
-                >
-                  <Edit2 className="h-3.5 w-3.5 text-gray-500" />
-                </button>
-                {onDuplicateProfile && (
+                
+                <div className="relative">
                   <button
-                    onClick={() => onDuplicateProfile(profile.id)}
-                    className="p-1.5 hover:bg-gray-100 rounded"
-                    title="Duplicate"
+                    onClick={() => setOpenMenuId(openMenuId === profile.id ? null : profile.id)}
+                    className="p-1.5 opacity-0 group-hover:opacity-100 hover:bg-gray-100 rounded transition-opacity"
                   >
-                    <Copy className="h-3.5 w-3.5 text-gray-500" />
+                    <MoreVertical className="h-4 w-4 text-gray-500" />
                   </button>
-                )}
-                {onShareProfile && (
-                  <button
-                    onClick={() => onShareProfile(profile.id)}
-                    className="p-1.5 hover:bg-gray-100 rounded"
-                    title="Share for feedback"
-                  >
-                    <Share2 className="h-3.5 w-3.5 text-gray-500" />
-                  </button>
-                )}
-                {!profile.is_default && (
-                  <button
-                    onClick={() => onSetDefault(profile.id)}
-                    className="p-1.5 hover:bg-gray-100 rounded"
-                    title="Set as default"
-                  >
-                    <Star className="h-3.5 w-3.5 text-gray-400" />
-                  </button>
-                )}
-                {profiles.length > 1 && (
-                  <button
-                    onClick={() => onDeleteProfile(profile.id)}
-                    className="p-1.5 hover:bg-red-50 rounded"
-                    title="Delete"
-                  >
-                    <Trash2 className="h-3.5 w-3.5 text-red-500" />
-                  </button>
-                )}
+                  
+                  {openMenuId === profile.id && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setOpenMenuId(null)} />
+                      <div className="absolute right-0 top-full mt-1 w-40 z-50 bg-white rounded-lg border border-gray-200 shadow-xl py-1">
+                        <button
+                          onClick={() => {
+                            setEditingId(profile.id);
+                            setEditName(profile.name);
+                            setOpenMenuId(null);
+                          }}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          <Edit2 className="h-3.5 w-3.5" />
+                          Rename
+                        </button>
+                        {onDuplicateProfile && (
+                          <button
+                            onClick={() => {
+                              onDuplicateProfile(profile.id);
+                              setOpenMenuId(null);
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            <Copy className="h-3.5 w-3.5" />
+                            Duplicate
+                          </button>
+                        )}
+                        {onShareProfile && (
+                          <button
+                            onClick={() => {
+                              onShareProfile(profile.id);
+                              setOpenMenuId(null);
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            <Share2 className="h-3.5 w-3.5" />
+                            Share
+                          </button>
+                        )}
+                        {!profile.is_default && (
+                          <button
+                            onClick={() => {
+                              onSetDefault(profile.id);
+                              setOpenMenuId(null);
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            <Star className="h-3.5 w-3.5" />
+                            Set Default
+                          </button>
+                        )}
+                        {profiles.length > 1 && (
+                          <button
+                            onClick={() => {
+                              setDeleteDialog({ show: true, profileId: profile.id });
+                              setOpenMenuId(null);
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -165,6 +202,19 @@ export const ProfileSelector = ({
           </button>
         </>
       )}
+
+      <Dialog
+        isOpen={deleteDialog.show}
+        onClose={() => setDeleteDialog({ show: false, profileId: null })}
+        onConfirm={() => {
+          if (deleteDialog.profileId) {
+            onDeleteProfile(deleteDialog.profileId);
+          }
+          setDeleteDialog({ show: false, profileId: null });
+        }}
+        title="Delete Profile"
+        message="Are you sure you want to delete this profile? This action cannot be undone."
+      />
     </div>
   );
 };

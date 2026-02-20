@@ -13,17 +13,17 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANT_CLASSES = {
-  primary: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm",
-  secondary: "bg-gray-600 text-white hover:bg-gray-700 shadow-sm",
-  outline: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50",
+  primary: "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40",
+  secondary: "bg-gradient-to-r from-gray-600 to-gray-700 text-white hover:shadow-lg shadow-gray-500/30",
+  outline: "border-2 border-gray-300 bg-white text-gray-700 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50",
   ghost: "text-gray-700 hover:bg-gray-100",
-  danger: "bg-red-600 text-white hover:bg-red-700 shadow-sm",
+  danger: "bg-gradient-to-r from-red-500 to-red-600 text-white hover:shadow-lg shadow-red-500/30",
 };
 
 const SIZE_CLASSES = {
-  sm: "px-3 h-8 text-xs",
-  md: "px-4 h-10 text-sm",
-  lg: "px-6 h-12 text-base",
+  sm: "px-4 py-2 text-sm",
+  md: "px-5 py-2.5 text-sm",
+  lg: "px-6 py-3 text-base",
 };
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -66,12 +66,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const buttonClasses = `
       relative overflow-hidden flex gap-2 items-center justify-center 
-      cursor-pointer rounded-lg text-center font-medium capitalize 
-      focus:shadow-none focus:ring-none focus:outline-none 
-      transition-all duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed
+      cursor-pointer rounded-lg text-center font-semibold
+      focus:outline-none focus:ring-2 focus:ring-blue-500/20
+      transition-all duration-200 ease-out 
+      disabled:opacity-50 disabled:cursor-not-allowed
+      active:scale-95
       ${VARIANT_CLASSES[variant]}
       ${SIZE_CLASSES[size]}
-      ${isPressed && !disabled ? "scale-95" : ""}
       ${className}
     `.trim();
 

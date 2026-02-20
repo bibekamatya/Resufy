@@ -84,7 +84,7 @@ export function HomeClient() {
           <div className="mt-12 flex items-center justify-center gap-8 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-green-600" />
-              <span>No signup required</span>
+              <span>Quick Sign Up</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-green-600" />

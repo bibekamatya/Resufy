@@ -134,35 +134,21 @@ export default function ResumePage() {
 
   return (
     <div className="h-screen w-full overflow-hidden">
-      <div className="mx-auto flex h-[calc(100vh-73px)] max-w-7xl">
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-          <div className="flex justify-end gap-2 mb-4">
-            <button
-              onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
-            >
-              <Printer className="h-4 w-4" />
-              Print
-            </button>
-            <button
-              onClick={handleExportPDF}
-              disabled={downloading}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-            >
-              <Download className="h-4 w-4" />
-              {downloading ? "Generating..." : "Download PDF"}
-            </button>
-          </div>
+      <div className="mx-auto flex flex-col lg:flex-row h-full">
+        {/* Main Preview Area */}
+        <div className="flex-1 overflow-y-auto p-3 sm:p-6">
+
+          {/* Resume Preview */}
           <div
             id="resume-preview"
-            className="mx-auto"
-            style={{ width: "794px" }}
+            className="mx-auto w-full lg:w-[794px]"
           >
-            <div className="bg-white shadow-2xl">{renderTemplate()}</div>
+            <div className="bg-white shadow-lg sm:shadow-2xl">{renderTemplate()}</div>
           </div>
         </div>
 
-        <aside className="w-56 shrink-0 overflow-y-auto border-l border-gray-200 bg-gray-50 p-3">
+        {/* Template Sidebar - Desktop only, Mobile uses bottom sheet */}
+        <aside className="hidden lg:block w-56 shrink-0 overflow-y-auto border-l border-gray-200 bg-gray-50 p-3">
           <div className="mb-4">
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-600">
               Templates
@@ -219,6 +205,25 @@ export default function ResumePage() {
             ))}
           </div>
         </aside>
+
+        {/* Mobile Template Selector - Fixed Bottom */}
+        <div className="lg:hidden fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 p-3 shadow-lg z-40">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            {templates.map((template) => (
+              <button
+                key={template.id}
+                onClick={() => setCurrentTemplate(template.id)}
+                className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  currentTemplate === template.id
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                {template.title}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

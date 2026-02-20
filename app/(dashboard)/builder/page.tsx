@@ -9,12 +9,6 @@ import { Undo, Redo } from "lucide-react";
 export default function BuilderPage() {
   const { resumeData, setResumeData, hasChanges, setHasChanges, saving, saveResume } = useProfile();
 
-  useEffect(() => {
-    if (resumeData) {
-      setHasChanges(true);
-    }
-  }, [resumeData]);
-
   const {
     updatePersonalInfo,
     addExperience,
@@ -35,7 +29,10 @@ export default function BuilderPage() {
     addLanguage,
     updateLanguage,
     deleteLanguage,
-  } = createResumeUpdaters(setResumeData);
+  } = createResumeUpdaters((updater) => {
+    setResumeData(updater);
+    setHasChanges(true);
+  });
 
   if (!resumeData) {
     return (
@@ -46,40 +43,29 @@ export default function BuilderPage() {
   }
 
   return (
-    <>
-      {hasChanges && (
-        <div className="fixed top-20 right-4 z-50">
-          <button
-            onClick={saveResume}
-            disabled={saving}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700 disabled:opacity-50"
-          >
-            {saving ? "Saving..." : "Save Changes"}
-          </button>
-        </div>
-      )}
+    <div className="h-full overflow-y-auto pb-24 lg:pb-0">
       <BuilderForm
-        resumeData={resumeData}
-        updatePersonalInfo={updatePersonalInfo}
-        addExperience={addExperience}
-        updateExperience={updateExperience}
-        deleteExperience={deleteExperience}
-        addEducation={addEducation}
-        updateEducation={updateEducation}
-        deleteEducation={deleteEducation}
-        addProject={addProject}
-        updateProject={updateProject}
-        deleteProject={deleteProject}
-        addSkill={addSkill}
-        deleteSkill={deleteSkill}
-        toggleSkillVisibility={toggleSkillVisibility}
-        addCertification={addCertification}
-        updateCertification={updateCertification}
-        deleteCertification={deleteCertification}
-        addLanguage={addLanguage}
-        updateLanguage={updateLanguage}
-        deleteLanguage={deleteLanguage}
-      />
-    </>
+          resumeData={resumeData}
+          updatePersonalInfo={updatePersonalInfo}
+          addExperience={addExperience}
+          updateExperience={updateExperience}
+          deleteExperience={deleteExperience}
+          addEducation={addEducation}
+          updateEducation={updateEducation}
+          deleteEducation={deleteEducation}
+          addProject={addProject}
+          updateProject={updateProject}
+          deleteProject={deleteProject}
+          addSkill={addSkill}
+          deleteSkill={deleteSkill}
+          toggleSkillVisibility={toggleSkillVisibility}
+          addCertification={addCertification}
+          updateCertification={updateCertification}
+          deleteCertification={deleteCertification}
+          addLanguage={addLanguage}
+          updateLanguage={updateLanguage}
+          deleteLanguage={deleteLanguage}
+        />
+    </div>
   );
 }
