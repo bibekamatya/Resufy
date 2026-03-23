@@ -20,7 +20,10 @@ const styles = StyleSheet.create({
 
 export const PDFBalanced = ({ data }: { data: ResumeData }) => {
   const visibleExperience = data.experience.filter(exp => exp.visible !== false);
+  const visibleProjects = data.projects.filter(proj => proj.visible !== false);
   const visibleSkills = data.skills.filter(skill => (data.skillsVisibility?.[skill] ?? true));
+  const visibleCertifications = (data.certifications || []).filter(cert => cert.visible !== false);
+  const visibleLanguages = (data.languages || []).filter(lang => lang.visible !== false);
 
   return (
     <Document>
@@ -34,6 +37,11 @@ export const PDFBalanced = ({ data }: { data: ResumeData }) => {
             <Text style={styles.contact}>
               {data.personalInfo.email} | {data.personalInfo.phone} | {data.personalInfo.location}
             </Text>
+            {(data.personalInfo.linkedin || data.personalInfo.website) && (
+              <Text style={styles.contact}>
+                {data.personalInfo.linkedin}{data.personalInfo.linkedin && data.personalInfo.website && " | "}{data.personalInfo.website}
+              </Text>
+            )}
             {data.personalInfo.summary && (
               <Text style={styles.summary}>{data.personalInfo.summary}</Text>
             )}
@@ -80,6 +88,41 @@ export const PDFBalanced = ({ data }: { data: ResumeData }) => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Skills</Text>
             <Text style={styles.text}>{visibleSkills.join(" | ")}</Text>
+          </View>
+        )}
+
+        {visibleProjects.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Projects</Text>
+            {visibleProjects.map((proj) => (
+              <View key={proj.id} style={{ marginBottom: 6 }}>
+                <Text style={styles.bold}>{proj.name}</Text>
+                <Text style={styles.text}>{proj.description}</Text>
+                <Text style={styles.text}>Tech: {proj.technologies.join(", ")}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {visibleCertifications.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Certifications</Text>
+            {visibleCertifications.map((cert) => (
+              <View key={cert.id} style={{ marginBottom: 5 }}>
+                <View style={styles.row}>
+                  <Text style={styles.bold}>{cert.name}</Text>
+                  <Text style={styles.text}>{cert.date}</Text>
+                </View>
+                <Text style={styles.text}>{cert.issuer}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {visibleLanguages.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Languages</Text>
+            <Text style={styles.text}>{visibleLanguages.map(l => `${l.name} (${l.proficiency})`).join(" | ")}</Text>
           </View>
         )}
       </Page>

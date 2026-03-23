@@ -2,32 +2,26 @@
 
 import Link from "next/link";
 import { FileText, LogOut } from "lucide-react";
-import { useSupabase } from "@/hooks/useSupabase";
+import { useAuth } from "@/lib/auth/AuthContext";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { User } from "@supabase/supabase-js";
 import { Button } from "./Button";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { useState } from "react";
 
-type AppHeaderProps = {
-  initialUser: User | null;
-};
-
-export function AppHeader({ initialUser }: AppHeaderProps) {
-  const supabase = useSupabase();
+export function AppHeader() {
+  const { user, signOut } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    signOut();
     router.push("/");
-    router.refresh();
   };
 
   const getUserInitial = () => {
-    return initialUser?.email?.charAt(0).toUpperCase() || "U";
+    return user?.email?.charAt(0).toUpperCase() || "U";
   };
 
   return (
@@ -46,7 +40,7 @@ export function AppHeader({ initialUser }: AppHeaderProps) {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-4">
-          {initialUser ? (
+          {user ? (
             <>
               {pathname === "/" && (
                 <nav className="flex items-center gap-1">
@@ -64,19 +58,9 @@ export function AppHeader({ initialUser }: AppHeaderProps) {
                   onClick={() => setProfileMenuOpen(!profileMenuOpen)}
                   className="flex h-10 w-10 items-center justify-center rounded-full transition-all hover:ring-2 hover:ring-blue-500/20"
                 >
-                  {initialUser.user_metadata?.avatar_url ? (
-                    <Image
-                      src={initialUser.user_metadata.avatar_url}
-                      alt="Avatar"
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                    />
-                  ) : (
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-sm font-bold text-white">
-                      {getUserInitial()}
-                    </div>
-                  )}
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-sm font-bold text-white">
+                    {getUserInitial()}
+                  </div>
                 </button>
                 
                 {profileMenuOpen && (
@@ -85,7 +69,7 @@ export function AppHeader({ initialUser }: AppHeaderProps) {
                     <div className="absolute right-0 top-full mt-2 w-64 z-50 rounded-xl border border-gray-200 bg-white shadow-xl">
                       <div className="border-b border-gray-100 p-4">
                         <div className="text-xs font-medium text-gray-500 mb-1">Signed in as</div>
-                        <div className="truncate text-sm font-semibold text-gray-900">{initialUser.email}</div>
+                        <div className="truncate text-sm font-semibold text-gray-900">{user.email}</div>
                       </div>
                       <div className="p-2">
                         <button
@@ -125,25 +109,15 @@ export function AppHeader({ initialUser }: AppHeaderProps) {
 
         {/* Mobile Actions */}
         <div className="flex items-center gap-2 md:hidden">
-          {initialUser ? (
+          {user ? (
             <div className="relative">
               <button
                 onClick={() => setProfileMenuOpen(!profileMenuOpen)}
                 className="flex h-10 w-10 items-center justify-center rounded-full transition-all hover:ring-2 hover:ring-blue-500/20"
               >
-                {initialUser.user_metadata?.avatar_url ? (
-                  <Image
-                    src={initialUser.user_metadata.avatar_url}
-                    alt="Avatar"
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-sm font-bold text-white">
-                    {getUserInitial()}
-                  </div>
-                )}
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-sm font-bold text-white">
+                  {getUserInitial()}
+                </div>
               </button>
               
               {profileMenuOpen && (
@@ -152,7 +126,7 @@ export function AppHeader({ initialUser }: AppHeaderProps) {
                   <div className="absolute right-0 top-full mt-2 w-64 z-50 rounded-xl border border-gray-200 bg-white shadow-xl">
                     <div className="border-b border-gray-100 p-4">
                       <div className="text-xs font-medium text-gray-500 mb-1">Signed in as</div>
-                      <div className="truncate text-sm font-semibold text-gray-900">{initialUser.email}</div>
+                      <div className="truncate text-sm font-semibold text-gray-900">{user.email}</div>
                     </div>
                     <div className="p-2">
                       <button

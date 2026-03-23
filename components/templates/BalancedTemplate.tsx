@@ -5,7 +5,13 @@ interface BalancedTemplateProps {
 }
 
 export const BalancedTemplate = ({ data }: BalancedTemplateProps) => {
-  const { personalInfo, experience, education, projects, skills } = data;
+  const { personalInfo, experience, education, projects, skills, skillsVisibility, certifications, languages } = data;
+  
+  const visibleExperience = experience.filter(exp => exp.visible !== false);
+  const visibleProjects = projects.filter(proj => proj.visible !== false);
+  const visibleSkills = skills.filter(skill => (skillsVisibility?.[skill] ?? true));
+  const visibleCertifications = (certifications || []).filter(cert => cert.visible !== false);
+  const visibleLanguages = (languages || []).filter(lang => lang.visible !== false);
 
   return (
     <div className="bg-white text-gray-900 w-full h-full p-8">
@@ -55,13 +61,13 @@ export const BalancedTemplate = ({ data }: BalancedTemplateProps) => {
           )}
 
           {/* Experience */}
-          {experience.length > 0 && (
+          {visibleExperience.length > 0 && (
             <div>
               <h2 className="text-base font-bold text-gray-900 mb-2 pb-1 border-b">
                 EXPERIENCE
               </h2>
               <div className="space-y-4">
-                {experience.map((exp) => (
+                {visibleExperience.map((exp) => (
                   <div key={exp.id}>
                     <div className="flex justify-between mb-1">
                       <h3 className="font-bold text-gray-900 text-sm">
@@ -116,13 +122,13 @@ export const BalancedTemplate = ({ data }: BalancedTemplateProps) => {
         {/* Right Column */}
         <div className="space-y-6">
           {/* Projects */}
-          {projects.length > 0 && (
+          {visibleProjects.length > 0 && (
             <div>
               <h2 className="text-base font-bold text-gray-900 mb-2 pb-1 border-b">
                 PROJECTS
               </h2>
               <div className="space-y-3">
-                {projects.map((proj) => (
+                {visibleProjects.map((proj) => (
                   <div key={proj.id}>
                     <h3 className="font-bold text-gray-900 text-sm">
                       {proj.name}
@@ -146,14 +152,14 @@ export const BalancedTemplate = ({ data }: BalancedTemplateProps) => {
           )}
 
           {/* Skills */}
-          {skills.length > 0 && (
+          {visibleSkills.length > 0 && (
             <div>
               <h2 className="text-base font-bold text-gray-900 mb-2 pb-1 border-b">
                 SKILLS
               </h2>
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  {skills.map((skill, idx) => (
+                  {visibleSkills.map((skill, idx) => (
                     <span
                       key={idx}
                       className="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full"

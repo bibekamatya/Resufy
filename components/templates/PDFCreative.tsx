@@ -22,7 +22,10 @@ const styles = StyleSheet.create({
 
 export const PDFCreative = ({ data }: { data: ResumeData }) => {
   const visibleExperience = data.experience.filter(exp => exp.visible !== false);
+  const visibleProjects = data.projects.filter(proj => proj.visible !== false);
   const visibleSkills = data.skills.filter(skill => (data.skillsVisibility?.[skill] ?? true));
+  const visibleCertifications = (data.certifications || []).filter(cert => cert.visible !== false);
+  const visibleLanguages = (data.languages || []).filter(lang => lang.visible !== false);
 
   return (
     <Document>
@@ -38,6 +41,8 @@ export const PDFCreative = ({ data }: { data: ResumeData }) => {
             <Text style={styles.sidebarTitle}>Contact</Text>
             <Text style={styles.contactItem}>{data.personalInfo.phone}</Text>
             <Text style={styles.contactItem}>{data.personalInfo.location}</Text>
+            {data.personalInfo.linkedin && <Text style={styles.contactItem}>{data.personalInfo.linkedin}</Text>}
+            {data.personalInfo.website && <Text style={styles.contactItem}>{data.personalInfo.website}</Text>}
           </View>
 
           <View style={styles.sidebarSection}>
@@ -80,6 +85,38 @@ export const PDFCreative = ({ data }: { data: ResumeData }) => {
                   <Text style={styles.text}>{edu.startDate} - {edu.endDate}</Text>
                 </View>
               ))}
+            </View>
+          )}
+
+          {visibleProjects.length > 0 && (
+            <View style={styles.mainSection}>
+              <Text style={styles.mainTitle}>Projects</Text>
+              {visibleProjects.map((proj) => (
+                <View key={proj.id} style={{ marginBottom: 6 }}>
+                  <Text style={styles.bold}>{proj.name}</Text>
+                  <Text style={styles.text}>{proj.description}</Text>
+                  <Text style={styles.text}>Tech: {proj.technologies.join(", ")}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {visibleCertifications.length > 0 && (
+            <View style={styles.mainSection}>
+              <Text style={styles.mainTitle}>Certifications</Text>
+              {visibleCertifications.map((cert) => (
+                <View key={cert.id} style={{ marginBottom: 5 }}>
+                  <Text style={styles.bold}>{cert.name}</Text>
+                  <Text style={styles.text}>{cert.issuer} - {cert.date}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {visibleLanguages.length > 0 && (
+            <View style={styles.mainSection}>
+              <Text style={styles.mainTitle}>Languages</Text>
+              <Text style={styles.text}>{visibleLanguages.map(l => `${l.name} (${l.proficiency})`).join(" | ")}</Text>
             </View>
           )}
         </View>

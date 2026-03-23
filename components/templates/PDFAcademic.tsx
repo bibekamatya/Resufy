@@ -19,7 +19,10 @@ const styles = StyleSheet.create({
 
 export const PDFAcademic = ({ data }: { data: ResumeData }) => {
   const visibleExperience = data.experience.filter(exp => exp.visible !== false);
+  const visibleProjects = data.projects.filter(proj => proj.visible !== false);
   const visibleSkills = data.skills.filter(skill => (data.skillsVisibility?.[skill] ?? true));
+  const visibleCertifications = (data.certifications || []).filter(cert => cert.visible !== false);
+  const visibleLanguages = (data.languages || []).filter(lang => lang.visible !== false);
 
   return (
     <Document>
@@ -32,10 +35,19 @@ export const PDFAcademic = ({ data }: { data: ResumeData }) => {
           <Text style={styles.contact}>
             {data.personalInfo.email} | {data.personalInfo.phone} | {data.personalInfo.location}
           </Text>
-          {data.personalInfo.summary && (
-            <Text style={styles.summary}>{data.personalInfo.summary}</Text>
+          {(data.personalInfo.linkedin || data.personalInfo.website) && (
+            <Text style={styles.contact}>
+              {data.personalInfo.linkedin}{data.personalInfo.linkedin && data.personalInfo.website && " | "}{data.personalInfo.website}
+            </Text>
           )}
         </View>
+
+        {data.personalInfo.summary && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Professional Summary</Text>
+            <Text style={styles.text}>{data.personalInfo.summary}</Text>
+          </View>
+        )}
 
         {data.education.length > 0 && (
           <View style={styles.section}>
@@ -55,7 +67,7 @@ export const PDFAcademic = ({ data }: { data: ResumeData }) => {
 
         {visibleExperience.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Research Experience</Text>
+            <Text style={styles.sectionTitle}>Experience</Text>
             {visibleExperience.map((exp) => (
               <View key={exp.id} style={{ marginBottom: 8 }}>
                 <View style={styles.row}>
@@ -76,8 +88,46 @@ export const PDFAcademic = ({ data }: { data: ResumeData }) => {
 
         {visibleSkills.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Skills</Text>
+            <Text style={styles.sectionTitle}>Technical Skills</Text>
             <Text style={styles.text}>{visibleSkills.join(" | ")}</Text>
+          </View>
+        )}
+
+        {visibleProjects.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Projects</Text>
+            {visibleProjects.map((proj) => (
+              <View key={proj.id} style={{ marginBottom: 6 }}>
+                <Text style={styles.bold}>{proj.name}</Text>
+                <Text style={styles.text}>{proj.description}</Text>
+                {proj.technologies.length > 0 && (
+                  <Text style={styles.text}>Technologies: {proj.technologies.join(", ")}</Text>
+                )}
+                {proj.link && <Text style={styles.text}>{proj.link}</Text>}
+              </View>
+            ))}
+          </View>
+        )}
+
+        {visibleCertifications.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Certifications</Text>
+            {visibleCertifications.map((cert) => (
+              <View key={cert.id} style={{ marginBottom: 5 }}>
+                <View style={styles.row}>
+                  <Text style={styles.bold}>{cert.name}</Text>
+                  <Text style={styles.text}>{cert.date}</Text>
+                </View>
+                <Text style={styles.text}>{cert.issuer}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {visibleLanguages.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Languages</Text>
+            <Text style={styles.text}>{visibleLanguages.map(l => `${l.name} (${l.proficiency})`).join(" | ")}</Text>
           </View>
         )}
       </Page>

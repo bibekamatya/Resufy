@@ -1,25 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useSupabase } from "@/hooks/useSupabase";
+import { useAuth } from "@/lib/auth/AuthContext";
 
 export const AuthForm = () => {
   const [loading, setLoading] = useState(false);
-  const supabase = useSupabase();
+  const { signIn } = useAuth();
 
   const handleGoogleLogin = async () => {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    
-    if (error) {
-      console.error('Login error:', error);
-      setLoading(false);
-    }
+    signIn();
   };
 
   return (

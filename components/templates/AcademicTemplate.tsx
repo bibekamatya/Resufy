@@ -5,7 +5,13 @@ interface AcademicTemplateProps {
 }
 
 export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
-  const { personalInfo, experience, education, projects, skills } = data;
+  const { personalInfo, experience, education, projects, skills, skillsVisibility, certifications, languages } = data;
+  
+  const visibleExperience = experience.filter(exp => exp.visible !== false);
+  const visibleProjects = projects.filter(proj => proj.visible !== false);
+  const visibleSkills = skills.filter(skill => (skillsVisibility?.[skill] ?? true));
+  const visibleCertifications = (certifications || []).filter(cert => cert.visible !== false);
+  const visibleLanguages = (languages || []).filter(lang => lang.visible !== false);
 
   return (
     <div className="bg-white text-gray-900 w-full h-full p-10">
@@ -85,13 +91,13 @@ export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
         )}
 
         {/* Experience */}
-        {experience.length > 0 && (
+        {visibleExperience.length > 0 && (
           <div>
             <h2 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">
               EXPERIENCE
             </h2>
             <div className="space-y-4">
-              {experience.map((exp) => (
+              {visibleExperience.map((exp) => (
                 <div key={exp.id} className="pb-4 border-b border-gray-100">
                   <div className="flex justify-between items-start mb-1">
                     <div>
@@ -127,13 +133,13 @@ export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
         {/* Projects & Skills Grid */}
         <div className="grid grid-cols-2 gap-8">
           {/* Projects */}
-          {projects.length > 0 && (
+          {visibleProjects.length > 0 && (
             <div>
               <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">
                 PROJECTS
               </h2>
               <div className="space-y-3">
-                {projects.map((proj) => (
+                {visibleProjects.map((proj) => (
                   <div key={proj.id} className="pb-3 border-b border-gray-100">
                     <h3 className="font-bold text-gray-900">{proj.name}</h3>
                     <p className="text-sm text-gray-700 mt-1">
@@ -155,13 +161,13 @@ export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
           )}
 
           {/* Skills */}
-          {skills.length > 0 && (
+          {visibleSkills.length > 0 && (
             <div>
               <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">
                 TECHNICAL SKILLS
               </h2>
               <div className="space-y-2">
-                {skills.map((skill, idx) => (
+                {visibleSkills.map((skill, idx) => (
                   <div key={idx} className="text-gray-700">
                     • {skill}
                   </div>

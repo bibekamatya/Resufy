@@ -26,10 +26,12 @@ interface PDFModernTemplateProps {
 }
 
 export const PDFModern = ({ data }: PDFModernTemplateProps) => {
-  const { personalInfo, experience, education, projects, skills } = data;
+  const { personalInfo, experience, education, projects, skills, certifications, languages } = data;
   const visibleExperience = experience.filter(exp => exp.visible !== false);
   const visibleProjects = projects.filter(proj => proj.visible !== false);
   const visibleSkills = skills.filter(skill => (data.skillsVisibility?.[skill] ?? true));
+  const visibleCertifications = (certifications || []).filter(cert => cert.visible !== false);
+  const visibleLanguages = (languages || []).filter(lang => lang.visible !== false);
 
   return (
     <Document>
@@ -43,6 +45,11 @@ export const PDFModern = ({ data }: PDFModernTemplateProps) => {
             <Text style={styles.contact}>{personalInfo.email}</Text>
             <Text style={styles.contact}>{personalInfo.phone}</Text>
             <Text style={styles.contact}>{personalInfo.location}</Text>
+            {(personalInfo.linkedin || personalInfo.website) && (
+              <Text style={styles.contact}>
+                {personalInfo.linkedin}{personalInfo.linkedin && personalInfo.website && " | "}{personalInfo.website}
+              </Text>
+            )}
           </View>
         </View>
 
@@ -108,6 +115,26 @@ export const PDFModern = ({ data }: PDFModernTemplateProps) => {
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>SKILLS</Text>
                 <Text style={styles.text}>{visibleSkills.join(" • ")}</Text>
+              </View>
+            )}
+
+            {visibleCertifications.length > 0 && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>CERTIFICATIONS</Text>
+                {visibleCertifications.map((cert) => (
+                  <View key={cert.id} style={{ marginBottom: 4 }}>
+                    <Text style={styles.bold}>{cert.name}</Text>
+                    <Text style={styles.text}>{cert.issuer}</Text>
+                    <Text style={styles.text}>{cert.date}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {visibleLanguages.length > 0 && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>LANGUAGES</Text>
+                <Text style={styles.text}>{visibleLanguages.map(l => `${l.name}: ${l.proficiency}`).join(" • ")}</Text>
               </View>
             )}
           </View>

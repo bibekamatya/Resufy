@@ -6,19 +6,11 @@ import { ClassicTemplate } from "@/components/templates/ClassicTemplate";
 import { CompactTemplate } from "@/components/templates/CompactTemplate";
 import { CreativeTemplate } from "@/components/templates/CreativeTemplate";
 import { ModernTemplate } from "@/components/templates/ModernTemplate";
-import { PDFClassic } from "@/components/templates/PDFClassic";
-import { PDFModern } from "@/components/templates/PDFModern";
-import { PDFCompact } from "@/components/templates/PDFCompact";
-import { PDFCreative } from "@/components/templates/PDFCreative";
-import { PDFAcademic } from "@/components/templates/PDFAcademic";
-import { PDFBalanced } from "@/components/templates/PDFBalanced";
 import Image from "next/image";
 import { TemplateType } from "@/lib/types";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useProfile } from "../layout";
-import { Download, Printer } from "lucide-react";
-import { pdf } from "@react-pdf/renderer";
-import { exportToPDF } from "@/lib/utils/pdfExport";
+import React from "react";
 
 const templates: {
   id: TemplateType;
@@ -71,56 +63,22 @@ const templates: {
 ];
 
 export default function ResumePage() {
-  const { resumeData, profiles, currentProfileId } = useProfile();
-  const [currentTemplate, setCurrentTemplate] = useState<TemplateType>("classic");
-  const [showPhoto, setShowPhoto] = useState(true);
-  const [downloading, setDownloading] = useState(false);
-
-  const currentProfile = profiles.find(p => p.id === currentProfileId);
+  const { resumeData, currentTemplate, setCurrentTemplate, showPhoto, setShowPhoto } = useProfile();
 
   useEffect(() => {
     setShowPhoto(!!resumeData.personalInfo.photoUrl);
-  }, [resumeData.personalInfo.photoUrl]);
-
-  const handleExportPDF = async () => {
-    setDownloading(true);
-    try {
-      const pdfTemplates = {
-        classic: <PDFClassic data={resumeData} />,
-        modern: <PDFModern data={resumeData} />,
-        compact: <PDFCompact data={resumeData} />,
-        creative: <PDFCreative data={resumeData} />,
-        academic: <PDFAcademic data={resumeData} />,
-        balanced: <PDFBalanced data={resumeData} />,
-      };
-
-      const blob = await pdf(pdfTemplates[currentTemplate]).toBlob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${currentProfile?.name || "resume"}.pdf`;
-      link.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("PDF generation failed:", error);
-    }
-    setDownloading(false);
-  };
-
-  const handlePrint = () => {
-    window.print();
-  };
+  }, [resumeData.personalInfo.photoUrl, setShowPhoto]);
 
   const renderTemplate = () => {
     const dataToRender = {
       ...resumeData,
       personalInfo: {
         ...resumeData.personalInfo,
-        photoUrl: showPhoto ? resumeData.personalInfo.photoUrl : ""
+        showPhoto: showPhoto && !!resumeData.personalInfo.photoUrl
       }
     };
     
-    const templateComponents = {
+    const templateComponents: Record<string, React.ReactElement> = {
       classic: <ClassicTemplate data={dataToRender} />,
       modern: <ModernTemplate data={dataToRender} />,
       balanced: <BalancedTemplate data={dataToRender} />,
@@ -137,7 +95,6 @@ export default function ResumePage() {
       <div className="mx-auto flex flex-col lg:flex-row h-full">
         {/* Main Preview Area */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-6">
-
           {/* Resume Preview */}
           <div
             id="resume-preview"

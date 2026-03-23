@@ -4,31 +4,22 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ClassicTemplate } from "@/components/templates/ClassicTemplate";
 import { ResumeData } from "@/lib/types";
-import { useSupabase } from "@/hooks/useSupabase";
 import { Loader2 } from "lucide-react";
+import { sampleResumeData } from "@/lib/data";
 
 export default function SharePage() {
   const params = useParams();
-  const supabase = useSupabase();
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadResume = async () => {
-      const { data } = await supabase
-        .from("resume_profiles")
-        .select("data, name")
-        .eq("id", params.id)
-        .single();
-
-      if (data) {
-        setResumeData(data.data);
-      }
+    // TODO: Implement MongoDB resume fetching
+    // For now, show sample data
+    setTimeout(() => {
+      setResumeData(sampleResumeData);
       setLoading(false);
-    };
-
-    loadResume();
-  }, [params.id, supabase]);
+    }, 1000);
+  }, [params.id]);
 
   if (loading) {
     return (
