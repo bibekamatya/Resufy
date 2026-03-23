@@ -1,16 +1,20 @@
-import { withAuth } from "next-auth/middleware"
+import { auth } from "@/lib/auth";
+import { NextResponse } from "next/server";
 
-export default withAuth(
-  function middleware(req) {
-    // Add any additional middleware logic here
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => !!token
-    },
+export default auth((req) => {
+  const isLoggedIn = !!req.auth;
+  const { pathname } = req.nextUrl;
+
+  // Protected routes
+  const isProtectedRoute = pathname.startsWith('/builder') || pathname.startsWith('/resume');
+
+  if (!isLoggedIn && isProtectedRoute) {
+    return NextResponse.redirect(new URL('/', req.url));
   }
-)
+
+  return NextResponse.next();
+});
 
 export const config = {
   matcher: ['/builder/:path*', '/resume/:path*']
-}
+};

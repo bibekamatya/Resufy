@@ -1,15 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { signIn } from "next-auth/react";
 
 export const AuthForm = () => {
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
 
   const handleGoogleLogin = async () => {
     setLoading(true);
-    signIn();
+    await signIn('google', { callbackUrl: '/builder' });
   };
 
   return (

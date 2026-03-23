@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { createResumeUpdaters } from "@/lib/utils/resumeUpdaters";
 import BuilderForm from "@/components/forms/BuilderForm";
-import { useProfile } from "../layout";
+import { useProfile } from "./hooks";
 import { Undo, Redo } from "lucide-react";
 
 export default function BuilderPage() {

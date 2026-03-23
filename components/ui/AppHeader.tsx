@@ -2,22 +2,22 @@
 
 import Link from "next/link";
 import { FileText, LogOut } from "lucide-react";
-import { useAuth } from "@/lib/auth/AuthContext";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "./Button";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { useState } from "react";
+import { signOut, useSession } from "next-auth/react";
 
 export function AppHeader() {
-  const { user, signOut } = useAuth();
+  const { data: session } = useSession();
+  const user = session?.user;
   const pathname = usePathname();
   const router = useRouter();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    signOut();
-    router.push("/");
+    await signOut({ callbackUrl: "/" });
   };
 
   const getUserInitial = () => {

@@ -56,19 +56,19 @@ export const ProfileSelector = ({
       <h3 className="text-sm font-semibold text-gray-700 mb-2">Resume Profiles</h3>
       <div className="space-y-1">
         {profiles.map((profile) => (
-          <div key={profile.id}>
-            {editingId === profile.id ? (
+          <div key={profile._id}>
+            {editingId === profile._id ? (
               <div className="flex gap-1">
                 <input
                   type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleRename(profile.id)}
+                  onKeyDown={(e) => e.key === "Enter" && handleRename(profile._id)}
                   className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
                   autoFocus
                 />
                 <button
-                  onClick={() => handleRename(profile.id)}
+                  onClick={() => handleRename(profile._id)}
                   className="px-2 py-1 bg-blue-600 text-white text-xs rounded"
                 >
                   Save
@@ -77,38 +77,33 @@ export const ProfileSelector = ({
             ) : (
               <div className="flex items-center gap-1 group">
                 <button
-                  onClick={() => onSelectProfile(profile.id)}
+                  onClick={() => onSelectProfile(profile._id)}
                   className={`flex-1 text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${
-                    currentProfileId === profile.id
+                    currentProfileId === profile._id
                       ? "bg-blue-50 text-blue-700 font-medium"
                       : "hover:bg-gray-50 text-gray-700"
                   }`}
                 >
-                  {profile.is_default ? (
-                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                  ) : (
-                    <Star className="h-3 w-3 text-gray-300" />
-                  )}
-                  <span className="flex-1 truncate">{profile.name}</span>
-                  {currentProfileId === profile.id && <Check className="h-4 w-4" />}
+                  <span className="flex-1 truncate">{profile.title}</span>
+                  {currentProfileId === profile._id && <Check className="h-4 w-4" />}
                 </button>
                 
                 <div className="relative">
                   <button
-                    onClick={() => setOpenMenuId(openMenuId === profile.id ? null : profile.id)}
+                    onClick={() => setOpenMenuId(openMenuId === profile._id ? null : profile._id)}
                     className="p-1.5 opacity-0 group-hover:opacity-100 hover:bg-gray-100 rounded transition-opacity"
                   >
                     <MoreVertical className="h-4 w-4 text-gray-500" />
                   </button>
                   
-                  {openMenuId === profile.id && (
+                  {openMenuId === profile._id && (
                     <>
                       <div className="fixed inset-0 z-40" onClick={() => setOpenMenuId(null)} />
                       <div className="absolute right-0 top-full mt-1 w-40 z-50 bg-white rounded-lg border border-gray-200 shadow-xl py-1">
                         <button
                           onClick={() => {
-                            setEditingId(profile.id);
-                            setEditName(profile.name);
+                            setEditingId(profile._id);
+                            setEditName(profile.title);
                             setOpenMenuId(null);
                           }}
                           className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -119,7 +114,7 @@ export const ProfileSelector = ({
                         {onDuplicateProfile && (
                           <button
                             onClick={() => {
-                              onDuplicateProfile(profile.id);
+                              onDuplicateProfile(profile._id);
                               setOpenMenuId(null);
                             }}
                             className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -131,7 +126,7 @@ export const ProfileSelector = ({
                         {onShareProfile && (
                           <button
                             onClick={() => {
-                              onShareProfile(profile.id);
+                              onShareProfile(profile._id);
                               setOpenMenuId(null);
                             }}
                             className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -140,22 +135,10 @@ export const ProfileSelector = ({
                             Share
                           </button>
                         )}
-                        {!profile.is_default && (
-                          <button
-                            onClick={() => {
-                              onSetDefault(profile.id);
-                              setOpenMenuId(null);
-                            }}
-                            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                          >
-                            <Star className="h-3.5 w-3.5" />
-                            Set Default
-                          </button>
-                        )}
                         {profiles.length > 1 && (
                           <button
                             onClick={() => {
-                              setDeleteDialog({ show: true, profileId: profile.id });
+                              setDeleteDialog({ show: true, profileId: profile._id });
                               setOpenMenuId(null);
                             }}
                             className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"

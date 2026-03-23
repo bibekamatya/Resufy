@@ -4,37 +4,45 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ClassicTemplate } from "@/components/templates/ClassicTemplate";
 import { ResumeData } from "@/lib/types";
-import { Loader2 } from "lucide-react";
-import { sampleResumeData } from "@/lib/data";
+import { getSharedResume } from "@/lib/actions/resume";
 
 export default function SharePage() {
   const params = useParams();
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // TODO: Implement MongoDB resume fetching
-    // For now, show sample data
-    setTimeout(() => {
-      setResumeData(sampleResumeData);
-      setLoading(false);
-    }, 1000);
+    const loadResume = async () => {
+      try {
+        const result = await getSharedResume(params.id as string);
+        if (result.success) {
+          setResumeData(result.resume.data);
+        } else {
+          setError(result.error || 'Resume not found');
+        }
+      } catch (err) {
+        setError('Failed to load resume');
+      }
+    };
+
+    if (params.id) {
+      loadResume();
+    }
   }, [params.id]);
 
-  if (loading) {
+  if (error) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Resume Not Found</h1>
+          <p className="text-gray-600">{error}</p>
+        </div>
       </div>
     );
   }
 
   if (!resumeData) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="text-gray-600">Resume not found</div>
-      </div>
-    );
+    return null; // Let Next.js loading.tsx handle this
   }
 
   return (

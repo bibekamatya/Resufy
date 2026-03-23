@@ -6,11 +6,19 @@ import { ClassicTemplate } from "@/components/templates/ClassicTemplate";
 import { CompactTemplate } from "@/components/templates/CompactTemplate";
 import { CreativeTemplate } from "@/components/templates/CreativeTemplate";
 import { ModernTemplate } from "@/components/templates/ModernTemplate";
+import { PDFAcademic } from "@/components/templates/PDFAcademic";
+import { PDFBalanced } from "@/components/templates/PDFBalanced";
+import { PDFClassic } from "@/components/templates/PDFClassic";
+import { PDFCompact } from "@/components/templates/PDFCompact";
+import { PDFCreative } from "@/components/templates/PDFCreative";
+import { PDFModern } from "@/components/templates/PDFModern";
 import Image from "next/image";
 import { TemplateType } from "@/lib/types";
-import { useEffect } from "react";
-import { useProfile } from "../layout";
+import { useEffect, useState } from "react";
+import { useProfile } from "./hooks";
 import React from "react";
+import { Download, Printer } from "lucide-react";
+import toast from "react-hot-toast";
 
 const templates: {
   id: TemplateType;
@@ -63,7 +71,8 @@ const templates: {
 ];
 
 export default function ResumePage() {
-  const { resumeData, currentTemplate, setCurrentTemplate, showPhoto, setShowPhoto } = useProfile();
+  const { resumeData, currentTemplate, setCurrentTemplate, showPhoto, setShowPhoto, profiles, currentProfileId } = useProfile();
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     setShowPhoto(!!resumeData.personalInfo.photoUrl);
@@ -90,6 +99,50 @@ export default function ResumePage() {
     return templateComponents[currentTemplate] || templateComponents.classic;
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleExportPDF = async () => {
+    setExporting(true);
+    try {
+      // Dynamic import to avoid SSR issues
+      const { pdf } = await import('@react-pdf/renderer');
+      
+      const currentProfile = profiles.find(p => p._id === currentProfileId);
+      const dataToRender = {
+        ...resumeData,
+        personalInfo: {
+          ...resumeData.personalInfo,
+          showPhoto: showPhoto && !!resumeData.personalInfo.photoUrl
+        }
+      };
+
+      const pdfTemplates: Record<string, React.ReactElement> = {
+        classic: <PDFClassic data={dataToRender} />,
+        modern: <PDFModern data={dataToRender} />,
+        compact: <PDFCompact data={dataToRender} />,
+        creative: <PDFCreative data={dataToRender} />,
+        academic: <PDFAcademic data={dataToRender} />,
+        balanced: <PDFBalanced data={dataToRender} />,
+      };
+
+      const blob = await pdf(pdfTemplates[currentTemplate] as any || pdfTemplates.classic).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${currentProfile?.title || "resume"}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.success('Resume exported successfully!');
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+      toast.error('Failed to export resume');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <div className="h-screen w-full overflow-hidden">
       <div className="mx-auto flex flex-col lg:flex-row h-full">
@@ -106,9 +159,31 @@ export default function ResumePage() {
 
         {/* Template Sidebar - Desktop only, Mobile uses bottom sheet */}
         <aside className="hidden lg:block w-56 shrink-0 overflow-y-auto border-l border-gray-200 bg-gray-50 p-3">
+          {/* Export Actions */}
+          <div className="mb-4 space-y-2">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-600">
+              Export
+            </h3>
+            <button
+              onClick={handlePrint}
+              className="w-full flex items-center gap-2 px-3 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-all"
+            >
+              <Printer className="h-4 w-4" />
+              Print
+            </button>
+            <button
+              onClick={handleExportPDF}
+              disabled={exporting}
+              className="w-full flex items-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-all"
+            >
+              <Download className="h-4 w-4" />
+              {exporting ? "Generating..." : "Download PDF"}
+            </button>
+          </div>
+
           <div className="mb-4">
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-600">
-              Templates
+              Options
             </h3>
             <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer hover:text-gray-900">
               <input
@@ -120,6 +195,12 @@ export default function ResumePage() {
               />
               <span className={!resumeData.personalInfo.photoUrl ? 'opacity-50' : ''}>Show Photo</span>
             </label>
+          </div>
+
+          <div className="mb-4">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-600">
+              Templates
+            </h3>
           </div>
 
           <div className="flex flex-col gap-3">
@@ -164,21 +245,43 @@ export default function ResumePage() {
         </aside>
 
         {/* Mobile Template Selector - Fixed Bottom */}
-        <div className="lg:hidden fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 p-3 shadow-lg z-40">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            {templates.map((template) => (
-              <button
-                key={template.id}
-                onClick={() => setCurrentTemplate(template.id)}
-                className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  currentTemplate === template.id
-                    ? "bg-blue-600 text-white shadow-md"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                {template.title}
-              </button>
-            ))}
+        <div className="lg:hidden fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
+          {/* Mobile Export Buttons */}
+          <div className="flex items-center gap-2 p-3 border-b border-gray-200">
+            <button
+              onClick={handlePrint}
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-all"
+            >
+              <Printer className="h-4 w-4" />
+              Print
+            </button>
+            <button
+              onClick={handleExportPDF}
+              disabled={exporting}
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-all"
+            >
+              <Download className="h-4 w-4" />
+              {exporting ? "Generating..." : "PDF"}
+            </button>
+          </div>
+          
+          {/* Mobile Template Selector */}
+          <div className="p-3">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              {templates.map((template) => (
+                <button
+                  key={template.id}
+                  onClick={() => setCurrentTemplate(template.id)}
+                  className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    currentTemplate === template.id
+                      ? "bg-blue-600 text-white shadow-md"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {template.title}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

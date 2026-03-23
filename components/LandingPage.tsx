@@ -1,16 +1,19 @@
 "use client";
 
 import { FileText, Sparkles, Download, Eye, Zap, Shield, Clock, CheckCircle2, ArrowRight, Star, Users } from "lucide-react";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { useSession } from "next-auth/react";
 import { AuthForm } from "@/components/ui/AuthForm";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/Button";
 
-export function HomeClient() {
-  const { user, loading } = useAuth();
+export function LandingPage() {
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [showAuth, setShowAuth] = useState(false);
+  
+  const user = session?.user;
+  const loading = status === 'loading';
 
   const handleBuildClick = () => {
     if (!loading && !user) {
