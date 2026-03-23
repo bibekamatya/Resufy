@@ -18,11 +18,6 @@ export const ClassicTemplate = ({ data }: ClassicTemplateProps) => {
       {/* Header */}
       <div className="border-b-2 border-gray-800 pb-4 mb-6">
         <div className="flex items-start gap-6">
-          {personalInfo.photoUrl && (
-            <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border-2 border-gray-800">
-              <img src={personalInfo.photoUrl} alt={personalInfo.fullName} className="h-full w-full object-cover" />
-            </div>
-          )}
           <div className="flex-1">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               {personalInfo.fullName || "Your Name"}

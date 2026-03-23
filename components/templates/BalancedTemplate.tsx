@@ -18,11 +18,6 @@ export const BalancedTemplate = ({ data }: BalancedTemplateProps) => {
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-start gap-4">
-          {personalInfo.photoUrl && (personalInfo.showPhoto ?? true) && (
-            <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 border-gray-300">
-              <img src={personalInfo.photoUrl} alt={personalInfo.fullName} className="h-full w-full object-cover" />
-            </div>
-          )}
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-1">
               {personalInfo.fullName}
@@ -168,6 +163,35 @@ export const BalancedTemplate = ({ data }: BalancedTemplateProps) => {
                     </span>
                   ))}
                 </div>
+              </div>
+            </div>
+          )}
+          {/* Certifications */}
+          {visibleCertifications.length > 0 && (
+            <div>
+              <h2 className="text-base font-bold text-gray-900 mb-2 pb-1 border-b">CERTIFICATIONS</h2>
+              <div className="space-y-2">
+                {visibleCertifications.map((cert) => (
+                  <div key={cert.id}>
+                    <p className="font-semibold text-sm text-gray-900">{cert.name}</p>
+                    <p className="text-xs text-gray-600">{cert.issuer}{cert.date && ` • ${cert.date}`}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Languages */}
+          {visibleLanguages.length > 0 && (
+            <div>
+              <h2 className="text-base font-bold text-gray-900 mb-2 pb-1 border-b">LANGUAGES</h2>
+              <div className="space-y-1">
+                {visibleLanguages.map((lang) => (
+                  <div key={lang.id} className="flex justify-between text-sm">
+                    <span className="text-gray-900">{lang.name}</span>
+                    <span className="text-gray-500">{lang.proficiency}</span>
+                  </div>
+                ))}
               </div>
             </div>
           )}

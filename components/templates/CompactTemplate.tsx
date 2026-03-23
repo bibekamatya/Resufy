@@ -5,17 +5,18 @@ interface CompactTemplateProps {
 }
 
 export const CompactTemplate = ({ data }: CompactTemplateProps) => {
-  const { personalInfo, experience, education, projects, skills } = data;
+  const { personalInfo, experience, education, projects, skills, skillsVisibility, certifications, languages } = data;
+
+  const visibleExperience = experience.filter(exp => exp.visible !== false);
+  const visibleProjects = projects.filter(proj => proj.visible !== false);
+  const visibleSkills = skills.filter(skill => skillsVisibility?.[skill] ?? true);
+  const visibleCertifications = (certifications || []).filter(cert => cert.visible !== false);
+  const visibleLanguages = (languages || []).filter(lang => lang.visible !== false);
 
   return (
     <div className="bg-white text-gray-900 w-full h-full p-6 text-sm">
       {/* Header */}
       <div className="text-center mb-6">
-        {personalInfo.photoUrl && (personalInfo.showPhoto ?? true) && (
-          <div className="relative h-16 w-16 mx-auto mb-3 overflow-hidden rounded-full border-2 border-gray-300">
-            <img src={personalInfo.photoUrl} alt={personalInfo.fullName} className="h-full w-full object-cover" />
-          </div>
-        )}
         <h1 className="text-xl font-bold text-gray-900 mb-1">
           {personalInfo.fullName}
         </h1>
@@ -46,12 +47,10 @@ export const CompactTemplate = ({ data }: CompactTemplateProps) => {
         )}
 
         {/* Experience */}
-        {experience.length > 0 && (
+        {visibleExperience.length > 0 && (
           <div>
-            <h2 className="text-base font-bold text-gray-900 mb-2 border-b border-gray-300 pb-1">
-              EXPERIENCE
-            </h2>
-            {experience.map((exp) => (
+            <h2 className="text-base font-bold text-gray-900 mb-2 border-b border-gray-300 pb-1">EXPERIENCE</h2>
+            {visibleExperience.map((exp) => (
               <div key={exp.id} className="mb-4 last:mb-0">
                 <div className="flex justify-between">
                   <span className="font-bold">{exp.company}</span>
@@ -102,12 +101,10 @@ export const CompactTemplate = ({ data }: CompactTemplateProps) => {
         )}
 
         {/* Projects */}
-        {projects.length > 0 && (
+        {visibleProjects.length > 0 && (
           <div>
-            <h2 className="text-base font-bold text-gray-900 mb-2 border-b border-gray-300 pb-1">
-              PROJECTS
-            </h2>
-            {projects.map((proj) => (
+            <h2 className="text-base font-bold text-gray-900 mb-2 border-b border-gray-300 pb-1">PROJECTS</h2>
+            {visibleProjects.map((proj) => (
               <div key={proj.id} className="mb-3 last:mb-0">
                 <div className="font-bold">{proj.name}</div>
                 <p className="text-gray-700 mt-1">{proj.description}</p>
@@ -122,16 +119,40 @@ export const CompactTemplate = ({ data }: CompactTemplateProps) => {
         )}
 
         {/* Skills */}
-        {skills.length > 0 && (
+        {visibleSkills.length > 0 && (
           <div>
-            <h2 className="text-base font-bold text-gray-900 mb-2 border-b border-gray-300 pb-1">
-              SKILLS
-            </h2>
+            <h2 className="text-base font-bold text-gray-900 mb-2 border-b border-gray-300 pb-1">SKILLS</h2>
             <div className="grid grid-cols-2 gap-2">
-              {skills.map((skill, idx) => (
-                <div key={idx} className="text-gray-700">
-                  • {skill}
+              {visibleSkills.map((skill, idx) => (
+                <div key={idx} className="text-gray-700">• {skill}</div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Certifications */}
+        {visibleCertifications.length > 0 && (
+          <div>
+            <h2 className="text-base font-bold text-gray-900 mb-2 border-b border-gray-300 pb-1">CERTIFICATIONS</h2>
+            {visibleCertifications.map((cert) => (
+              <div key={cert.id} className="flex justify-between mb-2">
+                <div>
+                  <span className="font-semibold">{cert.name}</span>
+                  <span className="text-gray-600"> — {cert.issuer}</span>
                 </div>
+                {cert.date && <span className="text-gray-500 text-xs">{cert.date}</span>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Languages */}
+        {visibleLanguages.length > 0 && (
+          <div>
+            <h2 className="text-base font-bold text-gray-900 mb-2 border-b border-gray-300 pb-1">LANGUAGES</h2>
+            <div className="flex flex-wrap gap-3">
+              {visibleLanguages.map((lang) => (
+                <span key={lang.id} className="text-gray-700">{lang.name} <span className="text-gray-500">({lang.proficiency})</span></span>
               ))}
             </div>
           </div>

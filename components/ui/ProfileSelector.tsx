@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ResumeProfile } from "@/lib/types";
-import { Plus, Check, Trash2, Edit2, Star, Copy, Share2, MoreVertical } from "lucide-react";
+import { Plus, Check, Trash2, Edit2, Copy, Share2, MoreVertical } from "lucide-react";
 import { Dialog } from "./Dialog";
 
 interface ProfileSelectorProps {
@@ -12,7 +12,6 @@ interface ProfileSelectorProps {
   onCreateProfile: (name: string) => void;
   onDeleteProfile: (profileId: string) => void;
   onRenameProfile: (profileId: string, name: string) => void;
-  onSetDefault: (profileId: string) => void;
   onDuplicateProfile?: (profileId: string) => void;
   onShareProfile?: (profileId: string) => void;
 }
@@ -24,7 +23,6 @@ export const ProfileSelector = ({
   onCreateProfile,
   onDeleteProfile,
   onRenameProfile,
-  onSetDefault,
   onDuplicateProfile,
   onShareProfile,
 }: ProfileSelectorProps) => {
@@ -164,12 +162,12 @@ export const ProfileSelector = ({
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleCreate()}
             placeholder="Profile name"
-            className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
+            className="flex-1 min-w-0 px-2 py-1 text-sm border border-gray-300 rounded"
             autoFocus
           />
           <button
             onClick={handleCreate}
-            className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+            className="shrink-0 px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
           >
             Add
           </button>

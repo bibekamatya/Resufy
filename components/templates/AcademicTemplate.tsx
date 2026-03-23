@@ -17,11 +17,6 @@ export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
     <div className="bg-white text-gray-900 w-full h-full p-10">
       {/* Header */}
       <div className="text-center mb-8 border-b border-gray-300 pb-6">
-        {personalInfo.photoUrl && (personalInfo.showPhoto ?? true) && (
-          <div className="relative h-24 w-24 mx-auto mb-4 overflow-hidden rounded-full border-2 border-gray-300">
-            <img src={personalInfo.photoUrl} alt={personalInfo.fullName} className="h-full w-full object-cover" />
-          </div>
-        )}
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           {personalInfo.fullName}
         </h1>
@@ -135,25 +130,18 @@ export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
           {/* Projects */}
           {visibleProjects.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">
-                PROJECTS
-              </h2>
+              <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">PROJECTS</h2>
               <div className="space-y-3">
                 {visibleProjects.map((proj) => (
                   <div key={proj.id} className="pb-3 border-b border-gray-100">
                     <h3 className="font-bold text-gray-900">{proj.name}</h3>
-                    <p className="text-sm text-gray-700 mt-1">
-                      {proj.description}
-                    </p>
+                    <p className="text-sm text-gray-700 mt-1">{proj.description}</p>
                     {proj.technologies.length > 0 && (
                       <p className="text-xs text-gray-600 mt-1">
-                        <span className="font-medium">Technologies:</span>{" "}
-                        {proj.technologies.join(", ")}
+                        <span className="font-medium">Technologies:</span> {proj.technologies.join(", ")}
                       </p>
                     )}
-                    {proj.link && (
-                      <p className="text-xs text-blue-600 mt-1">{proj.link}</p>
-                    )}
+                    {proj.link && <p className="text-xs text-blue-600 mt-1">{proj.link}</p>}
                   </div>
                 ))}
               </div>
@@ -163,19 +151,48 @@ export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
           {/* Skills */}
           {visibleSkills.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">
-                TECHNICAL SKILLS
-              </h2>
+              <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">TECHNICAL SKILLS</h2>
               <div className="space-y-2">
                 {visibleSkills.map((skill, idx) => (
-                  <div key={idx} className="text-gray-700">
-                    • {skill}
-                  </div>
+                  <div key={idx} className="text-gray-700">• {skill}</div>
                 ))}
               </div>
             </div>
           )}
         </div>
+
+        {/* Certifications */}
+        {visibleCertifications.length > 0 && (
+          <div>
+            <h2 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">CERTIFICATIONS</h2>
+            <div className="space-y-3">
+              {visibleCertifications.map((cert) => (
+                <div key={cert.id} className="flex justify-between items-start pb-3 border-b border-gray-100">
+                  <div>
+                    <h3 className="font-bold text-gray-900">{cert.name}</h3>
+                    <p className="text-sm text-gray-700">{cert.issuer}</p>
+                    {cert.credentialId && <p className="text-xs text-gray-500">ID: {cert.credentialId}</p>}
+                  </div>
+                  {cert.date && <span className="text-sm text-gray-600">{cert.date}</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Languages */}
+        {visibleLanguages.length > 0 && (
+          <div>
+            <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">LANGUAGES</h2>
+            <div className="flex flex-wrap gap-4">
+              {visibleLanguages.map((lang) => (
+                <span key={lang.id} className="text-gray-700">
+                  <span className="font-semibold">{lang.name}:</span> {lang.proficiency}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

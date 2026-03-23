@@ -1,4 +1,4 @@
-# 📄 ResuCraft
+# 📄 Resufy
 
 A modern, dynamic resume builder with live preview and PDF export. Create professional resumes with multiple templates.
 
@@ -16,7 +16,7 @@ A modern, dynamic resume builder with live preview and PDF export. Create profes
 - 📄 **PDF Export** - Clean PDF downloads with react-pdf
 - 🎯 **ATS Scoring** - Real-time ATS optimization with keyword suggestions
 - 🔗 **Share Resumes** - Generate public links for feedback
-- 🌙 **Dark Mode** - Toggle between light and dark themes
+- 🌙 **Dark Mode** - Light mode only
 - 💡 **Skills Autocomplete** - Smart suggestions from common skills
 - 📱 **Responsive** - Works on desktop and mobile devices
 
@@ -39,8 +39,8 @@ A modern, dynamic resume builder with live preview and PDF export. Create profes
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/bibekamatya/ResuCraft.git
-cd ResuCraft
+git clone https://github.com/bibekamatya/resufy.git
+cd resufy
 ```
 
 2. **Install dependencies**

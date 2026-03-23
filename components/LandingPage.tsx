@@ -6,6 +6,13 @@ import { AuthForm } from "@/components/ui/AuthForm";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/Button";
+import { ClassicTemplate } from "@/components/templates/ClassicTemplate";
+import { ModernTemplate } from "@/components/templates/ModernTemplate";
+import { CreativeTemplate } from "@/components/templates/CreativeTemplate";
+import { CompactTemplate } from "@/components/templates/CompactTemplate";
+import { AcademicTemplate } from "@/components/templates/AcademicTemplate";
+import { BalancedTemplate } from "@/components/templates/BalancedTemplate";
+import { sampleResumeData } from "@/lib/data";
 
 export function LandingPage() {
   const { data: session, status } = useSession();
@@ -61,7 +68,7 @@ export function LandingPage() {
 
           <p className="mx-auto mb-10 max-w-2xl text-lg text-gray-600 sm:text-xl">
             Professional resume builder with live preview, ATS-friendly templates, 
-            and instant PDF export. Join 10,000+ job seekers landing their dream jobs.
+            and instant PDF export. Start building your resume for free.
           </p>
 
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -84,7 +91,7 @@ export function LandingPage() {
             </Button>
           </div>
 
-          <div className="mt-12 flex items-center justify-center gap-8 text-sm text-gray-600">
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-green-600" />
               <span>Quick Sign Up</span>
@@ -106,20 +113,20 @@ export function LandingPage() {
         <div className="mx-auto max-w-7xl px-4">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-blue-600">10K+</div>
-              <div className="text-sm text-gray-600">Resumes Created</div>
-            </div>
-            <div className="text-center">
               <div className="mb-2 text-4xl font-bold text-blue-600">6</div>
               <div className="text-sm text-gray-600">Pro Templates</div>
             </div>
             <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-blue-600">95%</div>
-              <div className="text-sm text-gray-600">ATS Pass Rate</div>
+              <div className="mb-2 text-4xl font-bold text-blue-600">ATS</div>
+              <div className="text-sm text-gray-600">Optimized</div>
             </div>
             <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-blue-600">2min</div>
-              <div className="text-sm text-gray-600">Average Build Time</div>
+              <div className="mb-2 text-4xl font-bold text-blue-600">PDF</div>
+              <div className="text-sm text-gray-600">Instant Export</div>
+            </div>
+            <div className="text-center">
+              <div className="mb-2 text-4xl font-bold text-blue-600">Free</div>
+              <div className="text-sm text-gray-600">Forever</div>
             </div>
           </div>
         </div>
@@ -206,9 +213,9 @@ export function LandingPage() {
               <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-lg shadow-teal-500/40 transition-transform group-hover:scale-110">
                 <Sparkles className="h-7 w-7 text-white" />
               </div>
-              <h3 className="mb-3 text-xl font-bold">Dark Mode & More</h3>
+              <h3 className="mb-3 text-xl font-bold">Skills & More</h3>
               <p className="text-gray-600">
-                Dark mode toggle, skills autocomplete, photo support, and secure authentication with Supabase.
+                Skills autocomplete and secure authentication with Google OAuth.
               </p>
             </div>
           </div>
@@ -270,46 +277,33 @@ export function LandingPage() {
         <div className="mb-16 text-center">
           <h2 className="mb-4 text-4xl font-bold">Professional Templates</h2>
           <p className="mx-auto max-w-2xl text-lg text-gray-600">
-            Choose from 6 beautifully designed templates, all optimized for ATS systems
+            6 templates built for real-world hiring — clean, structured, and ATS-friendly
           </p>
         </div>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {[
-            { name: 'Classic', color: 'from-blue-500 to-blue-600', desc: 'Traditional and professional' },
-            { name: 'Modern', color: 'from-indigo-500 to-indigo-600', desc: 'Clean and contemporary' },
-            { name: 'Creative', color: 'from-purple-500 to-purple-600', desc: 'Stand out with style' },
-            { name: 'Compact', color: 'from-green-500 to-green-600', desc: 'Maximize content space' },
-            { name: 'Academic', color: 'from-orange-500 to-orange-600', desc: 'Perfect for research roles' },
-            { name: 'Balanced', color: 'from-pink-500 to-pink-600', desc: 'Best of both worlds' }
-          ].map((template) => (
-            <button
-              key={template.name}
-              onClick={handleBuildClick}
-              className="group relative overflow-hidden rounded-xl border-2 border-gray-200 bg-white p-5 text-left transition-all hover:border-blue-500 hover:shadow-xl"
+            { name: "Classic", desc: "Traditional", tag: "Most Popular", Template: ClassicTemplate },
+            { name: "Modern", desc: "Two-column", tag: "Clean", Template: ModernTemplate },
+            { name: "Creative", desc: "Blue sidebar", tag: "Bold", Template: CreativeTemplate },
+            { name: "Compact", desc: "Space-efficient", tag: "Minimal", Template: CompactTemplate },
+            { name: "Academic", desc: "Formal", tag: "Formal", Template: AcademicTemplate },
+            { name: "Balanced", desc: "Two-column", tag: "Versatile", Template: BalancedTemplate },
+          ].map(({ name, desc, tag, Template }) => (
+            <button key={name} onClick={handleBuildClick}
+              className="group snap-start shrink-0 w-48 overflow-hidden rounded-xl border-2 border-gray-200 bg-white text-left transition-all hover:border-blue-500 hover:shadow-xl"
             >
-              <div className={`mb-4 flex h-40 items-center justify-center rounded-lg bg-gradient-to-br ${template.color} shadow-md`}>
-                <div className="w-full space-y-2 px-4">
-                  <div className="h-2 w-3/4 rounded bg-white/90"></div>
-                  <div className="h-1.5 w-1/2 rounded bg-white/70"></div>
-                  <div className="mt-3 space-y-1.5">
-                    <div className="h-1.5 w-full rounded bg-white/60"></div>
-                    <div className="h-1.5 w-5/6 rounded bg-white/60"></div>
-                    <div className="h-1.5 w-4/6 rounded bg-white/60"></div>
-                  </div>
-                  <div className="mt-3 space-y-1.5">
-                    <div className="h-1.5 w-full rounded bg-white/60"></div>
-                    <div className="h-1.5 w-3/4 rounded bg-white/60"></div>
-                  </div>
+              <div className="overflow-hidden relative border-b border-gray-100 bg-white" style={{ paddingBottom: "130%" }}>
+                <div className="absolute inset-0 pointer-events-none" style={{ transform: "scale(0.245)", transformOrigin: "top left", width: "408%", height: "408%" }}>
+                  <Template data={sampleResumeData} />
                 </div>
+                <div className="absolute inset-0 bg-transparent group-hover:bg-blue-500/5 transition-colors" />
               </div>
-              
-              <h3 className="mb-1 text-lg font-bold text-gray-900">{template.name}</h3>
-              <p className="text-sm text-gray-600">{template.desc}</p>
-              
-              <div className="mt-3 flex items-center text-sm font-medium text-blue-600 opacity-0 transition-opacity group-hover:opacity-100">
-                <span>Use Template</span>
-                <ArrowRight className="ml-1 h-4 w-4" />
+              <div className="p-3">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="font-semibold text-sm text-gray-900">{name}</span>
+                  <span className="text-[9px] font-medium px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded-full">{tag}</span>
+                </div>
+                <p className="text-xs text-gray-400">{desc}</p>
               </div>
             </button>
           ))}
@@ -325,7 +319,7 @@ export function LandingPage() {
               Ready to Land Your Dream Job?
             </h2>
             <p className="mb-8 text-lg text-blue-100 sm:text-xl">
-              Join 10,000+ professionals who built their resumes with Resufy
+              Join professionals who built their resumes with Resufy
             </p>
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Button
@@ -339,7 +333,7 @@ export function LandingPage() {
               </Button>
               <div className="flex items-center gap-2 text-white">
                 <Users className="h-5 w-5" />
-                <span className="text-sm font-medium">10,000+ resumes created</span>
+                <span className="text-sm font-medium">Free forever, no credit card</span>
               </div>
             </div>
           </div>
@@ -360,7 +354,7 @@ export function LandingPage() {
               <p className="mb-4 text-sm text-gray-600">
                 Professional resume builder helping job seekers create ATS-friendly resumes in minutes.
               </p>
-              <p className="text-sm text-gray-500">© 2024 Resufy. Made with ❤️ by Bibek Amatya</p>
+              <p className="hidden md:block text-sm text-gray-500">© 2026 Resufy. Made with ❤️ by Bibek Amatya</p>
             </div>
             
             <div>
@@ -380,6 +374,9 @@ export function LandingPage() {
                 <li><a href="#" className="hover:text-blue-600">Terms of Service</a></li>
               </ul>
             </div>
+          </div>
+          <div className="mt-8 border-t border-gray-100 pt-6 text-center md:hidden">
+            <p className="text-sm text-gray-500">© 2026 Resufy. Made with ❤️ by Bibek Amatya</p>
           </div>
         </div>
       </footer>

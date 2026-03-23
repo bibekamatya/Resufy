@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { ResumeData } from "@/lib/types";
 import { calculateATSScore } from "@/lib/utils/atsScore";
 import { CheckCircle, AlertCircle } from "lucide-react";
@@ -9,9 +10,16 @@ interface ATSScoreProps {
 }
 
 export const ATSScore = ({ resumeData }: ATSScoreProps) => {
-  if (!resumeData) return null;
-  
-  const { score, suggestions, keywords } = calculateATSScore(resumeData);
+  const [debouncedData, setDebouncedData] = useState(resumeData);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedData(resumeData), 600);
+    return () => clearTimeout(t);
+  }, [resumeData]);
+
+  if (!debouncedData) return null;
+
+  const { score, suggestions, keywords } = calculateATSScore(debouncedData);
 
   const getScoreColor = () => {
     if (score >= 80) return "text-green-600 bg-green-50 border-green-200";

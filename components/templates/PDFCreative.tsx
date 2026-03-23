@@ -1,10 +1,9 @@
-import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { ResumeData } from "@/lib/types";
 
 const styles = StyleSheet.create({
   page: { flexDirection: "row", fontFamily: "Helvetica" },
   sidebar: { width: "30%", backgroundColor: "#1e293b", padding: 20, color: "white", alignItems: "center" },
-  photo: { width: 60, height: 60, borderRadius: 30, objectFit: "cover", marginBottom: 10 },
   main: { width: "70%", padding: 25 },
   name: { fontSize: 24, fontWeight: "bold", marginBottom: 5 },
   title: { fontSize: 12, color: "#94a3b8", marginBottom: 15 },
@@ -31,9 +30,6 @@ export const PDFCreative = ({ data }: { data: ResumeData }) => {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.sidebar}>
-          {data.personalInfo.photoUrl && (data.personalInfo.showPhoto ?? true) && (
-            <Image src={data.personalInfo.photoUrl} style={styles.photo} />
-          )}
           <Text style={styles.name}>{data.personalInfo.fullName}</Text>
           <Text style={styles.title}>{data.personalInfo.email}</Text>
 

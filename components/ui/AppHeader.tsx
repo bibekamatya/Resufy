@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { FileText, LogOut } from "lucide-react";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "./Button";
-import { DarkModeToggle } from "./DarkModeToggle";
 import { useState } from "react";
+import { AuthForm } from "@/components/ui/AuthForm";
 import { signOut, useSession } from "next-auth/react";
 
 export function AppHeader() {
@@ -15,6 +14,14 @@ export function AppHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+
+  const handleGetStarted = () => {
+    if (user) router.push("/builder");
+    else setShowAuth(true);
+  };
+
+  if (showAuth) return <AuthForm />;
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
@@ -23,6 +30,10 @@ export function AppHeader() {
   const getUserInitial = () => {
     return user?.email?.charAt(0).toUpperCase() || "U";
   };
+
+  const isDashboard = pathname === "/builder" || pathname === "/resume";
+
+  if (isDashboard) return null;
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm">
@@ -97,12 +108,9 @@ export function AppHeader() {
                   </Link>
                 </nav>
               )}
-              <DarkModeToggle />
-              <Link href="/builder">
-                <Button variant="primary" size="md" icon={FileText}>
-                  Get Started
-                </Button>
-              </Link>
+              <button onClick={handleGetStarted}>
+                <Button variant="primary" size="md" icon={FileText}>Get Started</Button>
+              </button>
             </>
           )}
         </div>
@@ -142,12 +150,10 @@ export function AppHeader() {
               )}
             </div>
           ) : (
-            <Link href="/builder">
-              <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium rounded-lg shadow-lg shadow-blue-500/30 hover:shadow-xl active:scale-95 transition-all">
+            <button onClick={handleGetStarted} className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium rounded-lg shadow-lg shadow-blue-500/30 hover:shadow-xl active:scale-95 transition-all">
                 <FileText className="h-4 w-4" />
                 Get Started
               </button>
-            </Link>
           )}
         </div>
       </div>

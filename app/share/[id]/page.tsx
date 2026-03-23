@@ -3,12 +3,27 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ClassicTemplate } from "@/components/templates/ClassicTemplate";
-import { ResumeData } from "@/lib/types";
+import { ModernTemplate } from "@/components/templates/ModernTemplate";
+import { CompactTemplate } from "@/components/templates/CompactTemplate";
+import { CreativeTemplate } from "@/components/templates/CreativeTemplate";
+import { AcademicTemplate } from "@/components/templates/AcademicTemplate";
+import { BalancedTemplate } from "@/components/templates/BalancedTemplate";
+import { ResumeData, TemplateType } from "@/lib/types";
 import { getSharedResume } from "@/lib/actions/resume";
+
+const templateComponents: Record<TemplateType, React.ComponentType<{ data: ResumeData }>> = {
+  classic: ClassicTemplate,
+  modern: ModernTemplate,
+  compact: CompactTemplate,
+  creative: CreativeTemplate,
+  academic: AcademicTemplate,
+  balanced: BalancedTemplate,
+};
 
 export default function SharePage() {
   const params = useParams();
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
+  const [template, setTemplate] = useState<TemplateType>("classic");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -17,6 +32,7 @@ export default function SharePage() {
         const result = await getSharedResume(params.id as string);
         if (result.success) {
           setResumeData(result.resume.data);
+          setTemplate((result.resume.template as TemplateType) || "classic");
         } else {
           setError(result.error || 'Resume not found');
         }
@@ -25,9 +41,7 @@ export default function SharePage() {
       }
     };
 
-    if (params.id) {
-      loadResume();
-    }
+    if (params.id) loadResume();
   }, [params.id]);
 
   if (error) {
@@ -41,15 +55,15 @@ export default function SharePage() {
     );
   }
 
-  if (!resumeData) {
-    return null; // Let Next.js loading.tsx handle this
-  }
+  if (!resumeData) return null;
+
+  const TemplateComponent = templateComponents[template] || ClassicTemplate;
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white shadow-2xl" style={{ width: "794px" }}>
-          <ClassicTemplate data={resumeData} />
+          <TemplateComponent data={resumeData} />
         </div>
       </div>
     </div>

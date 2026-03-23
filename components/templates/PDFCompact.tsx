@@ -1,10 +1,9 @@
-import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { ResumeData } from "@/lib/types";
 
 const styles = StyleSheet.create({
   page: { padding: 25, fontSize: 9, fontFamily: "Helvetica" },
   header: { marginBottom: 10, borderBottom: "2pt solid #000", paddingBottom: 8, flexDirection: "row", gap: 8, alignItems: "center" },
-  photo: { width: 40, height: 40, borderRadius: 20, objectFit: "cover" },
   headerText: { flex: 1 },
   name: { fontSize: 20, fontWeight: "bold" },
   contact: { fontSize: 8, color: "#333", marginTop: 3 },
@@ -31,9 +30,6 @@ export const PDFCompact = ({ data }: { data: ResumeData }) => {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          {data.personalInfo.photoUrl && (data.personalInfo.showPhoto ?? true) && (
-            <Image src={data.personalInfo.photoUrl} style={styles.photo} />
-          )}
           <View style={styles.headerText}>
             <Text style={styles.name}>{data.personalInfo.fullName}</Text>
             <Text style={styles.contact}>

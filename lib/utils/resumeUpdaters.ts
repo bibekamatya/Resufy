@@ -1,7 +1,7 @@
 import { ResumeData, PersonalInfo, Experience, Education, Project, Certification, Language } from "@/lib/types";
 
 export const createResumeUpdaters = (
-  setResumeData: React.Dispatch<React.SetStateAction<ResumeData>>
+  setResumeData: (updater: ResumeData | ((prev: ResumeData) => ResumeData)) => void
 ) => {
   // Update personal info fields
   const updatePersonalInfo = (field: keyof PersonalInfo, value: string | boolean) => {

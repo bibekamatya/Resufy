@@ -6,8 +6,6 @@ export interface PersonalInfo {
   linkedin?: string;
   website?: string;
   summary: string;
-  photoUrl?: string;
-  showPhoto?: boolean;
 }
 
 export interface Experience {

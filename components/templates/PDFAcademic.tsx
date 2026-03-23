@@ -1,10 +1,9 @@
-import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { ResumeData } from "@/lib/types";
 
 const styles = StyleSheet.create({
   page: { padding: 35, fontFamily: "Helvetica" },
   header: { marginBottom: 15, textAlign: "center", alignItems: "center" },
-  photo: { width: 60, height: 60, borderRadius: 30, objectFit: "cover", marginBottom: 8 },
   name: { fontSize: 26, fontWeight: "bold" },
   contact: { fontSize: 8, color: "#555", marginTop: 5 },
   summary: { fontSize: 9, lineHeight: 1.4, textAlign: "center", marginTop: 10, paddingHorizontal: 30 },
@@ -28,9 +27,6 @@ export const PDFAcademic = ({ data }: { data: ResumeData }) => {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          {data.personalInfo.photoUrl && (data.personalInfo.showPhoto ?? true) && (
-            <Image src={data.personalInfo.photoUrl} style={styles.photo} />
-          )}
           <Text style={styles.name}>{data.personalInfo.fullName}</Text>
           <Text style={styles.contact}>
             {data.personalInfo.email} | {data.personalInfo.phone} | {data.personalInfo.location}

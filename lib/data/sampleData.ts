@@ -1,5 +1,16 @@
 import { ResumeData } from "../types";
 
+export const blankResumeData: ResumeData = {
+  personalInfo: { fullName: "", email: "", phone: "", location: "", linkedin: "", website: "", summary: "" },
+  experience: [],
+  education: [],
+  skills: [],
+  projects: [],
+  certifications: [],
+  languages: [],
+  skillsVisibility: {},
+};
+
 export const sampleResumeData: ResumeData = {
   personalInfo: {
     fullName: "Marcus Rodriguez",
@@ -8,7 +19,6 @@ export const sampleResumeData: ResumeData = {
     location: "Los Angeles, CA",
     linkedin: "linkedin.com/in/marcusrodriguez",
     website: "marcusrodriguez.tech",
-    photoUrl: "",
     summary:
       "Tech Lead with 8+ years of experience in building scalable web applications and leading distributed engineering teams. Specialized in cloud infrastructure, DevOps practices, and mentoring developers. Passionate about creating efficient development processes and building products that make an impact.",
   },
@@ -146,4 +156,27 @@ export const sampleResumeData: ResumeData = {
     },
   ],
   skillsVisibility: {},
+  certifications: [
+    {
+      id: "cert1",
+      name: "AWS Certified Solutions Architect",
+      issuer: "Amazon Web Services",
+      date: "2023-04",
+      credentialId: "AWS-SAA-123456",
+      visible: true,
+    },
+    {
+      id: "cert2",
+      name: "Certified Kubernetes Administrator",
+      issuer: "Cloud Native Computing Foundation",
+      date: "2022-11",
+      credentialId: "CKA-789012",
+      visible: true,
+    },
+  ],
+  languages: [
+    { id: "lang1", name: "English", proficiency: "Native", visible: true },
+    { id: "lang2", name: "Spanish", proficiency: "Fluent", visible: true },
+    { id: "lang3", name: "Portuguese", proficiency: "Conversational", visible: true },
+  ],
 };

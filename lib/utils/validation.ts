@@ -12,7 +12,7 @@ export const validatePhone = (phone: string): boolean => {
 
 export const validateUrl = (url: string): boolean => {
   try {
-    new URL(url)
+    new URL(url.startsWith('http') ? url : `https://${url}`)
     return true
   } catch {
     return false

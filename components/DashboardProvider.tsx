@@ -1,14 +1,15 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { ResumeData, ResumeProfile } from "@/lib/types";
-import { sampleResumeData } from "@/lib/data";
-import { FileText, Target, Edit3, Eye } from "lucide-react";
+import { sampleResumeData, emptyResumeData } from "@/lib/data";
+import { FileText, Target, Edit3, Eye, Download, ZoomIn, ZoomOut, ChevronDown, LogOut, Check, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { getResumes, saveResume, createResume, deleteResume, duplicateResume, renameResume, shareResume } from "@/lib/actions/resume";
 import toast from "react-hot-toast";
-import { LoadingOverlay } from "@/components/ui/LoadingSpinner";
+
+import { validateResumeData } from "@/lib/utils/validation";
 import { ProfileSelector } from "@/components/ui/ProfileSelector";
 import { ATSScore } from "@/components/ui/ATSScore";
 
@@ -28,8 +29,9 @@ interface ProfileContextType {
   selectProfile: (profileId: string) => void;
   currentTemplate: string;
   setCurrentTemplate: (template: string) => void;
-  showPhoto: boolean;
-  setShowPhoto: (show: boolean) => void;
+  zoom: number;
+  zoomIn: () => void;
+  zoomOut: () => void;
 }
 
 const ProfileContext = createContext<ProfileContextType | null>(null);
@@ -40,6 +42,29 @@ export const useProfile = () => {
   return context;
 };
 
+import { signOut } from "next-auth/react";
+
+function UserFooter({ user }: { user: any }) {
+  const initial = user?.email?.charAt(0).toUpperCase() || "U";
+  return (
+    <div className="flex items-center gap-2.5">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-xs font-bold text-white">
+        {initial}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-medium text-gray-900 truncate">{user?.name || user?.email}</p>
+        <p className="text-[10px] text-gray-400 truncate">{user?.email}</p>
+      </div>
+      <button
+        onClick={() => signOut({ callbackUrl: "/" })}
+        title="Logout"
+        className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
+      >
+        <LogOut className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
 export function DashboardProvider({ children, user }: { children: ReactNode; user: any }) {
   const [resumeData, setResumeData] = useState<ResumeData>(sampleResumeData);
   const [profiles, setProfiles] = useState<ResumeProfile[]>([]);
@@ -48,8 +73,63 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
   const [saving, setSaving] = useState(false);
   const pathname = usePathname();
   const [currentTemplate, setCurrentTemplate] = useState("classic");
-  const [showPhoto, setShowPhoto] = useState(true);
   const [initialized, setInitialized] = useState(false);
+  const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [zoom, setZoom] = useState(100);
+  const zoomIn = () => setZoom(z => Math.min(z + 10, 150));
+  const zoomOut = () => setZoom(z => Math.max(z - 10, 50));
+
+  useEffect(() => {
+    if (!exportOpen) return;
+    const close = () => setExportOpen(false);
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, [exportOpen]);
+
+  const handleExportWord = async () => {
+    setExportOpen(false);
+    const { exportToWord } = await import('@/lib/utils/exportWord');
+    const currentProfile = profiles.find(p => p._id === currentProfileId);
+    await exportToWord(resumeData, currentProfile?.title || 'resume');
+    toast.success('Word document exported!');
+  };
+
+  const handleExportPDF = async () => {
+    setExportOpen(false);
+    setExporting(true);
+    try {
+      const { pdf } = await import('@react-pdf/renderer');
+      const { PDFClassic } = await import('@/components/templates/PDFClassic');
+      const { PDFModern } = await import('@/components/templates/PDFModern');
+      const { PDFCompact } = await import('@/components/templates/PDFCompact');
+      const { PDFCreative } = await import('@/components/templates/PDFCreative');
+      const { PDFAcademic } = await import('@/components/templates/PDFAcademic');
+      const { PDFBalanced } = await import('@/components/templates/PDFBalanced');
+      const currentProfile = profiles.find(p => p._id === currentProfileId);
+      const pdfTemplates: Record<string, React.ReactElement> = {
+        classic: <PDFClassic data={resumeData} />,
+        modern: <PDFModern data={resumeData} />,
+        compact: <PDFCompact data={resumeData} />,
+        creative: <PDFCreative data={resumeData} />,
+        academic: <PDFAcademic data={resumeData} />,
+        balanced: <PDFBalanced data={resumeData} />,
+      };
+      const blob = await pdf(pdfTemplates[currentTemplate] as any || pdfTemplates.classic).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${currentProfile?.title || 'resume'}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.success('Resume exported successfully!');
+    } catch (error) {
+      toast.error('Failed to export resume');
+    } finally {
+      setExporting(false);
+    }
+  };
 
   // Load resumes from MongoDB
   useEffect(() => {
@@ -83,13 +163,20 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
 
   const handleSaveResume = async () => {
     if (!user || !currentProfileId) return;
+
+    const { isValid, errors } = validateResumeData(resumeData);
+    if (!isValid) {
+      const firstError = Object.values(errors)[0][0];
+      toast.error(firstError);
+      return;
+    }
+
     setSaving(true);
     
     try {
       const result = await saveResume(currentProfileId, resumeData, currentTemplate);
       if (result.success) {
         setHasChanges(false);
-        toast.success('Resume saved successfully!');
         // Update the profile in state if it was created
         if (currentProfileId === 'default' && result.resume) {
           setCurrentProfileId(result.resume._id);
@@ -105,9 +192,21 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
     setSaving(false);
   };
 
+  // Auto-save: debounce 3 seconds after last change
+  useEffect(() => {
+    if (!hasChanges || !initialized) return;
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    autoSaveTimer.current = setTimeout(() => {
+      handleSaveResume();
+    }, 3000);
+    return () => {
+      if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    };
+  }, [resumeData, hasChanges, initialized]);
+
   const handleCreateProfile = async (name: string) => {
     try {
-      const result = await createResume(name, resumeData);
+      const result = await createResume(name, emptyResumeData);
       if (result.success) {
         setProfiles([...profiles, result.resume]);
         setCurrentProfileId(result.resume._id);
@@ -192,6 +291,10 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
   };
 
   const selectProfile = (profileId: string) => {
+    if (hasChanges) {
+      const confirmed = window.confirm('You have unsaved changes. Switch profile anyway? Changes will be auto-saved.');
+      if (!confirmed) return;
+    }
     const profile = profiles.find(p => p._id === profileId);
     if (profile) {
       setCurrentProfileId(profileId);
@@ -219,41 +322,55 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
         selectProfile,
         currentTemplate,
         setCurrentTemplate,
-        showPhoto,
-        setShowPhoto,
+        zoom,
+        zoomIn,
+        zoomOut,
       }}
     >
-      <div className="flex flex-col lg:flex-row h-screen">
-        {/* Loading Overlay */}
-        {saving && <LoadingOverlay text="Saving resume..." />}
-        
+      <div className="flex flex-col lg:flex-row h-screen overflow-hidden">
         {/* Desktop Sidebar */}
-        <aside className="hidden lg:block lg:w-64 border-r border-gray-200 bg-white p-4 overflow-y-auto space-y-4">
-          <ProfileSelector
-            profiles={profiles}
-            currentProfileId={currentProfileId}
-            onSelectProfile={selectProfile}
-            onCreateProfile={handleCreateProfile}
-            onDeleteProfile={handleDeleteProfile}
-            onRenameProfile={handleRenameProfile}
-            onSetDefault={() => {}} // TODO: Implement set default
-            onDuplicateProfile={handleDuplicateProfile}
-            onShareProfile={handleShareProfile}
-          />
-          <ATSScore resumeData={resumeData} />
+        <aside className="hidden lg:flex lg:flex-col lg:w-64 border-r border-gray-200 bg-white shrink-0 h-screen">
+          {/* Logo */}
+          <div className="p-4 border-b border-gray-100 shrink-0">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-md shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-shadow">
+                <FileText className="h-4 w-4 text-white" strokeWidth={2.5} />
+              </div>
+              <div>
+                <div className="text-base font-bold text-gray-900 leading-tight">Resufy</div>
+                <div className="text-[10px] text-gray-400 leading-tight">Resume Builder</div>
+              </div>
+            </Link>
+          </div>
+          {/* Sidebar content scrolls */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <ProfileSelector
+              profiles={profiles}
+              currentProfileId={currentProfileId}
+              onSelectProfile={selectProfile}
+              onCreateProfile={handleCreateProfile}
+              onDeleteProfile={handleDeleteProfile}
+              onRenameProfile={handleRenameProfile}
+              onDuplicateProfile={handleDuplicateProfile}
+              onShareProfile={handleShareProfile}
+            />
+            <ATSScore resumeData={resumeData} />
+          </div>
+          {/* User info footer */}
+          <div className="p-3 border-t border-gray-100 shrink-0">
+            <UserFooter user={user} />
+          </div>
         </aside>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Desktop Tabs */}
-          <div className="hidden lg:flex items-center justify-between border-b border-gray-200 bg-white px-6 h-14">
-            <div className="flex items-center">
+        <div className="flex-1 flex flex-col min-w-0 h-screen">
+          {/* Top Nav — fixed, never scrolls */}
+          <div className="hidden lg:flex items-center justify-between border-b border-gray-200 bg-white px-6 h-14 shrink-0">
+            <div className="flex items-center h-full">
               <Link
                 href="/builder"
-                className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium text-sm transition-colors ${
-                  pathname === "/builder"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-600 hover:text-gray-900"
+                className={`flex items-center gap-2 px-4 h-full border-b-2 font-medium text-sm transition-colors ${
+                  pathname === "/builder" ? "border-blue-600 text-blue-600" : "border-transparent text-gray-500 hover:text-gray-900"
                 }`}
               >
                 <Edit3 className="h-4 w-4" />
@@ -261,31 +378,60 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
               </Link>
               <Link
                 href="/resume"
-                className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium text-sm transition-colors ${
-                  pathname === "/resume"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-600 hover:text-gray-900"
+                className={`flex items-center gap-2 px-4 h-full border-b-2 font-medium text-sm transition-colors ${
+                  pathname === "/resume" ? "border-blue-600 text-blue-600" : "border-transparent text-gray-500 hover:text-gray-900"
                 }`}
               >
                 <Eye className="h-4 w-4" />
                 Preview
               </Link>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               {pathname === "/builder" && (
-                <button
-                  onClick={handleSaveResume}
-                  disabled={saving || !hasChanges}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                >
-                  {saving ? "Saving..." : "Save Changes"}
-                </button>
+                <span className="flex items-center gap-1.5 text-xs text-gray-400">
+                  {saving ? <><Loader2 className="h-3.5 w-3.5 animate-spin" />Saving...</> : !hasChanges ? <><Check className="h-3.5 w-3.5 text-green-500" />Saved</> : null}
+                </span>
+              )}
+              {pathname === "/resume" && (
+                <>
+                  <div className="flex items-center gap-1">
+                    <button onClick={zoomOut} disabled={zoom <= 50} className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-40 transition-all">
+                      <ZoomOut className="h-4 w-4 text-gray-600" />
+                    </button>
+                    <span className="text-xs font-medium text-gray-600 w-10 text-center">{zoom}%</span>
+                    <button onClick={zoomIn} disabled={zoom >= 150} className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-40 transition-all">
+                      <ZoomIn className="h-4 w-4 text-gray-600" />
+                    </button>
+                  </div>
+                  <div className="w-px h-5 bg-gray-200" />
+                  <div className="relative" onClick={e => e.stopPropagation()}>
+                    <button
+                      onClick={() => setExportOpen(o => !o)}
+                      disabled={exporting}
+                      className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-all"
+                    >
+                      <Download className="h-4 w-4" />
+                      {exporting ? 'Exporting...' : 'Export'}
+                      <ChevronDown className="h-3 w-3" />
+                    </button>
+                    {exportOpen && (
+                      <div className="absolute right-0 top-full mt-1 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
+                        <button onClick={handleExportPDF} className="w-full px-4 py-2.5 text-sm text-left text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-red-500" /> Export as PDF
+                        </button>
+                        <button onClick={handleExportWord} className="w-full px-4 py-2.5 text-sm text-left text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-blue-500" /> Export as Word
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           </div>
 
-          {/* Page Content */}
-          <div className="flex-1 overflow-hidden pb-16 lg:pb-0">{children}</div>
+          {/* Page Content — only this scrolls */}
+          <div className="flex-1 min-h-0">{children}</div>
         </div>
 
         {/* Mobile Bottom Navigation */}
@@ -300,6 +446,11 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
               <Edit3 className="h-5 w-5" />
               <span className="text-xs font-medium">Editor</span>
             </Link>
+            {pathname === "/builder" && (
+              <span className="flex flex-col items-center gap-1 px-4 py-2 text-xs text-gray-400">
+                {saving ? <><Loader2 className="h-4 w-4 animate-spin" />Saving</> : !hasChanges ? <><Check className="h-4 w-4 text-green-500" />Saved</> : null}
+              </span>
+            )}
             <Link
               href="/resume"
               className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${

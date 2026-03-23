@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { ResumeData } from "@/lib/types";
 
 const styles = StyleSheet.create({
@@ -7,7 +7,6 @@ const styles = StyleSheet.create({
   left: { flex: 2 },
   right: { flex: 1 },
   header: { marginBottom: 12, flexDirection: "row", gap: 10, alignItems: "center" },
-  photo: { width: 50, height: 50, borderRadius: 5, objectFit: "cover" },
   headerText: { flex: 1 },
   name: { fontSize: 22, fontWeight: "bold", marginBottom: 5 },
   contact: { fontSize: 8, color: "#555", marginBottom: 1 },
@@ -37,9 +36,6 @@ export const PDFModern = ({ data }: PDFModernTemplateProps) => {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          {personalInfo.photoUrl && (personalInfo.showPhoto ?? true) && (
-            <Image src={personalInfo.photoUrl} style={styles.photo} />
-          )}
           <View style={styles.headerText}>
             <Text style={styles.name}>{personalInfo.fullName}</Text>
             <Text style={styles.contact}>{personalInfo.email}</Text>

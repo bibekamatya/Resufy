@@ -43,7 +43,7 @@ export default function BuilderPage() {
   }
 
   return (
-    <div className="h-full overflow-y-auto pb-24 lg:pb-0">
+    <div className="h-full flex flex-col min-h-0">
       <BuilderForm
           resumeData={resumeData}
           updatePersonalInfo={updatePersonalInfo}

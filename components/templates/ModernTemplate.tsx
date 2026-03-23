@@ -5,18 +5,19 @@ interface ModernTemplateProps {
 }
 
 export const ModernTemplate = ({ data }: ModernTemplateProps) => {
-  const { personalInfo, experience, education, projects, skills } = data;
+  const { personalInfo, experience, education, projects, skills, skillsVisibility, certifications, languages } = data;
+
+  const visibleExperience = experience.filter(exp => exp.visible !== false);
+  const visibleProjects = projects.filter(proj => proj.visible !== false);
+  const visibleSkills = skills.filter(skill => skillsVisibility?.[skill] ?? true);
+  const visibleCertifications = (certifications || []).filter(cert => cert.visible !== false);
+  const visibleLanguages = (languages || []).filter(lang => lang.visible !== false);
 
   return (
     <div className="bg-white text-gray-900 w-full h-full p-8 print:p-4">
       {/* Header with two-column layout */}
       <div className="flex justify-between items-start mb-8 print:mb-4">
         <div className="flex items-start gap-4">
-          {personalInfo.photoUrl && (personalInfo.showPhoto ?? true) && (
-            <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 border-gray-300">
-              <img src={personalInfo.photoUrl} alt={personalInfo.fullName} className="h-full w-full object-cover" />
-            </div>
-          )}
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2 print:text-2xl print:mb-1">
               {personalInfo.fullName}
@@ -58,13 +59,13 @@ export const ModernTemplate = ({ data }: ModernTemplateProps) => {
           )}
 
           {/* Experience */}
-          {experience.length > 0 && (
+          {visibleExperience.length > 0 && (
             <div>
               <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">
                 EXPERIENCE
               </h2>
               <div className="space-y-4">
-                {experience.map((exp) => (
+                {visibleExperience.map((exp) => (
                   <div key={exp.id} className="pb-4 border-b border-gray-100">
                     <div className="flex justify-between mb-1">
                       <h3 className="font-bold text-gray-900">
@@ -96,13 +97,13 @@ export const ModernTemplate = ({ data }: ModernTemplateProps) => {
           )}
 
           {/* Projects */}
-          {projects.length > 0 && (
+          {visibleProjects.length > 0 && (
             <div>
               <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">
                 PROJECTS
               </h2>
               <div className="space-y-3">
-                {projects.map((proj) => (
+                {visibleProjects.map((proj) => (
                   <div key={proj.id} className="pb-3 border-b border-gray-100">
                     <div className="flex justify-between items-start mb-1">
                       <h3 className="font-bold text-gray-900">{proj.name}</h3>
@@ -165,19 +166,46 @@ export const ModernTemplate = ({ data }: ModernTemplateProps) => {
           )}
 
           {/* Skills */}
-          {skills.length > 0 && (
+          {visibleSkills.length > 0 && (
             <div>
               <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">
                 SKILLS
               </h2>
               <div className="flex flex-wrap gap-2">
-                {skills.map((skill, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 text-sm bg-blue-50 text-blue-700 rounded-full"
-                  >
+                {visibleSkills.map((skill, idx) => (
+                  <span key={idx} className="px-3 py-1 text-sm bg-blue-50 text-blue-700 rounded-full">
                     {skill}
                   </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Certifications */}
+          {visibleCertifications.length > 0 && (
+            <div>
+              <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">CERTIFICATIONS</h2>
+              <div className="space-y-2">
+                {visibleCertifications.map((cert) => (
+                  <div key={cert.id}>
+                    <p className="font-semibold text-sm text-gray-900">{cert.name}</p>
+                    <p className="text-xs text-gray-600">{cert.issuer}{cert.date && ` • ${cert.date}`}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Languages */}
+          {visibleLanguages.length > 0 && (
+            <div>
+              <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">LANGUAGES</h2>
+              <div className="space-y-1">
+                {visibleLanguages.map((lang) => (
+                  <div key={lang.id} className="flex justify-between text-sm">
+                    <span className="text-gray-900">{lang.name}</span>
+                    <span className="text-gray-500">{lang.proficiency}</span>
+                  </div>
                 ))}
               </div>
             </div>
