@@ -5,29 +5,40 @@ interface BalancedTemplateProps {
 }
 
 export const BalancedTemplate = ({ data }: BalancedTemplateProps) => {
-  const { personalInfo, experience, education, projects, skills } = data;
+  const { personalInfo, experience, education, projects, skills, skillsVisibility, certifications, languages } = data;
+  
+  const visibleExperience = experience.filter(exp => exp.visible !== false);
+  const visibleProjects = projects.filter(proj => proj.visible !== false);
+  const visibleSkills = skills.filter(skill => (skillsVisibility?.[skill] ?? true));
+  const visibleCertifications = (certifications || []).filter(cert => cert.visible !== false);
+  const visibleLanguages = (languages || []).filter(lang => lang.visible !== false);
+  const visibleEducation = education.filter(edu => edu.visible !== false);
 
   return (
     <div className="bg-white text-gray-900 w-full h-full p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-1">
-          {personalInfo.fullName}
-        </h1>
-        <div className="flex flex-wrap gap-3 text-gray-600 mb-2">
-          {personalInfo.email && <span>{personalInfo.email}</span>}
-          {personalInfo.phone && <span>•</span>}
-          {personalInfo.phone && <span>{personalInfo.phone}</span>}
-          {personalInfo.location && <span>•</span>}
-          {personalInfo.location && <span>{personalInfo.location}</span>}
-        </div>
-        {(personalInfo.linkedin || personalInfo.website) && (
-          <div className="flex flex-wrap gap-3 text-blue-600">
-            {personalInfo.linkedin && <span>{personalInfo.linkedin}</span>}
-            {personalInfo.linkedin && personalInfo.website && <span>•</span>}
-            {personalInfo.website && <span>{personalInfo.website}</span>}
+        <div className="flex items-start gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">
+              {personalInfo.fullName}
+            </h1>
+            <div className="flex flex-wrap gap-3 text-gray-600 mb-2">
+              {personalInfo.email && <span>{personalInfo.email}</span>}
+              {personalInfo.phone && <span>•</span>}
+              {personalInfo.phone && <span>{personalInfo.phone}</span>}
+              {personalInfo.location && <span>•</span>}
+              {personalInfo.location && <span>{personalInfo.location}</span>}
+            </div>
+            {(personalInfo.linkedin || personalInfo.website) && (
+              <div className="flex flex-wrap gap-3 text-blue-600">
+                {personalInfo.linkedin && <span>{personalInfo.linkedin}</span>}
+                {personalInfo.linkedin && personalInfo.website && <span>•</span>}
+                {personalInfo.website && <span>{personalInfo.website}</span>}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-8">
@@ -46,13 +57,13 @@ export const BalancedTemplate = ({ data }: BalancedTemplateProps) => {
           )}
 
           {/* Experience */}
-          {experience.length > 0 && (
+          {visibleExperience.length > 0 && (
             <div>
               <h2 className="text-base font-bold text-gray-900 mb-2 pb-1 border-b">
                 EXPERIENCE
               </h2>
               <div className="space-y-4">
-                {experience.map((exp) => (
+                {visibleExperience.map((exp) => (
                   <div key={exp.id}>
                     <div className="flex justify-between mb-1">
                       <h3 className="font-bold text-gray-900 text-sm">
@@ -81,13 +92,13 @@ export const BalancedTemplate = ({ data }: BalancedTemplateProps) => {
           )}
 
           {/* Education */}
-          {education.length > 0 && (
+          {visibleEducation.length > 0 && (
             <div>
               <h2 className="text-base font-bold text-gray-900 mb-2 pb-1 border-b">
                 EDUCATION
               </h2>
               <div className="space-y-3">
-                {education.map((edu) => (
+                {visibleEducation.map((edu) => (
                   <div key={edu.id}>
                     <h3 className="font-bold text-gray-900 text-sm">
                       {edu.degree}
@@ -107,13 +118,13 @@ export const BalancedTemplate = ({ data }: BalancedTemplateProps) => {
         {/* Right Column */}
         <div className="space-y-6">
           {/* Projects */}
-          {projects.length > 0 && (
+          {visibleProjects.length > 0 && (
             <div>
               <h2 className="text-base font-bold text-gray-900 mb-2 pb-1 border-b">
                 PROJECTS
               </h2>
               <div className="space-y-3">
-                {projects.map((proj) => (
+                {visibleProjects.map((proj) => (
                   <div key={proj.id}>
                     <h3 className="font-bold text-gray-900 text-sm">
                       {proj.name}
@@ -137,14 +148,14 @@ export const BalancedTemplate = ({ data }: BalancedTemplateProps) => {
           )}
 
           {/* Skills */}
-          {skills.length > 0 && (
+          {visibleSkills.length > 0 && (
             <div>
               <h2 className="text-base font-bold text-gray-900 mb-2 pb-1 border-b">
                 SKILLS
               </h2>
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  {skills.map((skill, idx) => (
+                  {visibleSkills.map((skill, idx) => (
                     <span
                       key={idx}
                       className="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full"
@@ -153,6 +164,35 @@ export const BalancedTemplate = ({ data }: BalancedTemplateProps) => {
                     </span>
                   ))}
                 </div>
+              </div>
+            </div>
+          )}
+          {/* Certifications */}
+          {visibleCertifications.length > 0 && (
+            <div>
+              <h2 className="text-base font-bold text-gray-900 mb-2 pb-1 border-b">CERTIFICATIONS</h2>
+              <div className="space-y-2">
+                {visibleCertifications.map((cert) => (
+                  <div key={cert.id}>
+                    <p className="font-semibold text-sm text-gray-900">{cert.name}</p>
+                    <p className="text-xs text-gray-600">{cert.issuer}{cert.date && ` • ${cert.date}`}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Languages */}
+          {visibleLanguages.length > 0 && (
+            <div>
+              <h2 className="text-base font-bold text-gray-900 mb-2 pb-1 border-b">LANGUAGES</h2>
+              <div className="space-y-1">
+                {visibleLanguages.map((lang) => (
+                  <div key={lang.id} className="flex justify-between text-sm">
+                    <span className="text-gray-900">{lang.name}</span>
+                    <span className="text-gray-500">{lang.proficiency}</span>
+                  </div>
+                ))}
               </div>
             </div>
           )}

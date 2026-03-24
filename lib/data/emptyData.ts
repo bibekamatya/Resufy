@@ -14,4 +14,7 @@ export const emptyResumeData: ResumeData = {
   education: [],
   skills: [],
   projects: [],
+  certifications: [],
+  languages: [],
+  skillsVisibility: {},
 };

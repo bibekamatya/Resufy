@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Input, Textarea } from "../ui/Input";
-import { Accordion } from "../ui/Accordion";
+import { Button } from "../ui/Button";
+import { Card, CardHeader } from "../ui/Card";
+import { Plus, Trash2, GripVertical } from "lucide-react";
+import { commonSkills } from "@/lib/data/commonSkills";
 import {
-  ResumeData,
-  PersonalInfo,
-  Experience,
-  Education,
-  Project,
+  ResumeData, PersonalInfo, Experience, Education, Project, Certification, Language, SectionKey, DEFAULT_SECTION_ORDER
 } from "@/lib/types";
 
 interface BuilderFormProps {
   resumeData: ResumeData;
-  updatePersonalInfo: (field: keyof PersonalInfo, value: string) => void;
+  updatePersonalInfo: (field: keyof PersonalInfo, value: string | boolean) => void;
   addExperience: () => void;
   updateExperience: (id: string, field: keyof Experience, value: any) => void;
   deleteExperience: (id: string) => void;
@@ -24,374 +23,401 @@ interface BuilderFormProps {
   deleteProject: (id: string) => void;
   addSkill: (skill: string) => void;
   deleteSkill: (index: number) => void;
+  toggleSkillVisibility: (skill: string) => void;
+  addCertification: () => void;
+  updateCertification: (id: string, field: keyof Certification, value: any) => void;
+  deleteCertification: (id: string) => void;
+  addLanguage: () => void;
+  updateLanguage: (id: string, field: keyof Language, value: any) => void;
+  deleteLanguage: (id: string) => void;
+  reorderSections: (order: SectionKey[]) => void;
 }
+
+const SECTION_TABS: { id: SectionKey; label: string }[] = [
+  { id: "experience", label: "Experience" },
+  { id: "education", label: "Education" },
+  { id: "projects", label: "Projects" },
+  { id: "skills", label: "Skills" },
+  { id: "certifications", label: "Certifications" },
+  { id: "languages", label: "Languages" },
+];
+
+const TABS = [
+  { id: "personal", label: "Personal" },
+  ...SECTION_TABS,
+];
+
+const getTabCount = (id: string, resumeData: ResumeData): number | boolean => {
+  switch (id) {
+    case "personal": return Boolean(resumeData.personalInfo.fullName && resumeData.personalInfo.email);
+    case "experience": return resumeData.experience.length;
+    case "education": return resumeData.education.length;
+    case "projects": return resumeData.projects.length;
+    case "skills": return resumeData.skills.length;
+    case "certifications": return (resumeData.certifications || []).length;
+    case "languages": return (resumeData.languages || []).length;
+    default: return false;
+  }
+};
 
 const BuilderForm = ({
   resumeData,
   updatePersonalInfo,
-  addExperience,
-  updateExperience,
-  deleteExperience,
-  addEducation,
-  updateEducation,
-  deleteEducation,
-  addProject,
-  updateProject,
-  deleteProject,
-  addSkill,
-  deleteSkill,
+  addExperience, updateExperience, deleteExperience,
+  addEducation, updateEducation, deleteEducation,
+  addProject, updateProject, deleteProject,
+  addSkill, deleteSkill, toggleSkillVisibility,
+  addCertification, updateCertification, deleteCertification,
+  addLanguage, updateLanguage, deleteLanguage,
+  reorderSections,
 }: BuilderFormProps) => {
-  const [openSection, setOpenSection] = useState<string>("personal");
+  const [activeTab, setActiveTab] = useState("personal");
+  const [skillInput, setSkillInput] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Check if sections are completed
-  const isPersonalInfoComplete = Boolean(
-    resumeData.personalInfo.fullName &&
-    resumeData.personalInfo.email &&
-    resumeData.personalInfo.phone,
-  );
+  const sectionOrder: SectionKey[] = resumeData.sectionOrder ?? DEFAULT_SECTION_ORDER;
+  const [localOrder, setLocalOrder] = useState<SectionKey[]>(sectionOrder);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const dragItem = useRef<string | null>(null);
 
-  const isExperienceComplete = resumeData.experience.length > 0;
-  const isEducationComplete = resumeData.education.length > 0;
-  const isProjectsComplete = resumeData.projects.length > 0;
-  const isSkillsComplete = resumeData.skills.length > 0;
+  // Sync localOrder when sectionOrder changes externally
+  React.useEffect(() => {
+    setLocalOrder(resumeData.sectionOrder ?? DEFAULT_SECTION_ORDER);
+  }, [resumeData.sectionOrder]);
+
+  const orderedTabs = [
+    { id: "personal", label: "Personal" },
+    ...localOrder.map(id => SECTION_TABS.find(t => t.id === id)!).filter(Boolean),
+  ];
+
+  const handleDragStart = (id: string) => {
+    dragItem.current = id;
+    setDraggingId(id);
+  };
+
+  const handleDragOver = (e: React.DragEvent, id: string) => {
+    e.preventDefault();
+    if (!dragItem.current || dragItem.current === id || id === "personal") return;
+    const from = dragItem.current as SectionKey;
+    const to = id as SectionKey;
+    const newOrder = [...localOrder];
+    const fromIdx = newOrder.indexOf(from);
+    const toIdx = newOrder.indexOf(to);
+    if (fromIdx === -1 || toIdx === -1) return;
+    newOrder.splice(fromIdx, 1);
+    newOrder.splice(toIdx, 0, from);
+    setLocalOrder(newOrder);
+    setDragOverId(id);
+  };
+
+  const handleDrop = () => {
+    reorderSections(localOrder);
+    setDraggingId(null);
+    setDragOverId(null);
+    dragItem.current = null;
+  };
+
+  const handleDragEnd = () => {
+    setDraggingId(null);
+    setDragOverId(null);
+    dragItem.current = null;
+  };
+
+  const filteredSkills = commonSkills.filter(
+    (skill) => skillInput && skill.toLowerCase().includes(skillInput.toLowerCase()) && !resumeData.skills.includes(skill)
+  ).slice(0, 5);
+
+  if (!resumeData) return null;
 
   return (
-    <div className="overflow-y-auto h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
-      <div className="p-6 space-y-4">
-        {/* Personal Information */}
-        <Accordion
-          title="Personal Information"
-          isOpen={openSection === "personal"}
-          onToggle={() =>
-            setOpenSection(openSection === "personal" ? "" : "personal")
-          }
-          isCompleted={isPersonalInfoComplete}
-        >
-          <div className="space-y-3">
-            <Input
-              label="Full Name"
-              value={resumeData.personalInfo.fullName}
-              onChange={(val) => updatePersonalInfo("fullName", val)}
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <Input
-                label="Email"
-                type="email"
-                value={resumeData.personalInfo.email}
-                onChange={(val) => updatePersonalInfo("email", val)}
-              />
-              <Input
-                label="Phone"
-                type="tel"
-                value={resumeData.personalInfo.phone}
-                onChange={(val) => updatePersonalInfo("phone", val)}
-              />
+    <div className="flex flex-col h-full min-h-0">
+      {/* Tab Bar */}
+      <div className="flex overflow-x-auto border-b border-gray-200 bg-white shrink-0 scrollbar-hide">
+        {orderedTabs.map((tab) => {
+          const count = getTabCount(tab.id, resumeData);
+          const hasData = typeof count === "boolean" ? count : count > 0;
+          const isSection = tab.id !== "personal";
+          const isDragging = draggingId === tab.id;
+          const isOver = dragOverId === tab.id;
+          return (
+            <div
+              key={tab.id}
+              draggable={isSection}
+              onDragStart={() => isSection && handleDragStart(tab.id)}
+              onDragOver={(e) => isSection && handleDragOver(e, tab.id)}
+              onDrop={handleDrop}
+              onDragEnd={handleDragEnd}
+              className={`shrink-0 flex items-center border-b-2 select-none transition-all duration-200 ${
+                isDragging ? "opacity-40 scale-95" : "opacity-100 scale-100"
+              } ${
+                isOver && !isDragging ? "bg-blue-50 border-b-blue-300" : activeTab === tab.id ? "border-blue-600" : "border-transparent"
+              }`}
+            >
+              {isSection && (
+                <span className="pl-2 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 transition-colors">
+                  <GripVertical className="h-3.5 w-3.5" />
+                </span>
+              )}
+              <button
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-3 py-3 text-sm font-medium whitespace-nowrap flex items-center gap-1.5 transition-colors ${
+                  activeTab === tab.id ? "text-blue-600" : "text-gray-500 hover:text-gray-800"
+                }`}
+              >
+                {tab.label}
+                {typeof count === "number" && count > 0 ? (
+                  <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
+                    activeTab === tab.id ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
+                  }`}>{count}</span>
+                ) : typeof count === "boolean" && hasData ? (
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                ) : null}
+              </button>
             </div>
-            <Input
-              label="Location"
-              value={resumeData.personalInfo.location}
-              onChange={(val) => updatePersonalInfo("location", val)}
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <Input
-                label="LinkedIn"
-                value={resumeData.personalInfo.linkedin || ""}
-                onChange={(val) => updatePersonalInfo("linkedin", val)}
-              />
-              <Input
-                label="Website"
-                value={resumeData.personalInfo.website || ""}
-                onChange={(val) => updatePersonalInfo("website", val)}
-              />
+          );
+        })}
+      </div>
+
+      {/* Tab Content */}
+      <div className="flex-1 overflow-y-scroll overscroll-contain p-4 sm:p-6 bg-gray-50 pb-16 lg:pb-6">
+
+        {/* Personal */}
+        {activeTab === "personal" && (
+          <div className="space-y-3 max-w-2xl">
+            <Input label="Full Name" value={resumeData.personalInfo.fullName} onChange={(val) => updatePersonalInfo("fullName", val)} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Input label="Email" type="email" value={resumeData.personalInfo.email} onChange={(val) => updatePersonalInfo("email", val)} />
+              <Input label="Phone" type="tel" value={resumeData.personalInfo.phone} onChange={(val) => updatePersonalInfo("phone", val)} />
             </div>
-            <Textarea
-              label="Professional Summary"
-              rows={4}
-              value={resumeData.personalInfo.summary}
-              onChange={(val) => updatePersonalInfo("summary", val)}
-            />
+            <Input label="Location" value={resumeData.personalInfo.location} onChange={(val) => updatePersonalInfo("location", val)} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Input label="LinkedIn" value={resumeData.personalInfo.linkedin || ""} onChange={(val) => updatePersonalInfo("linkedin", val)} />
+              <Input label="Website" value={resumeData.personalInfo.website || ""} onChange={(val) => updatePersonalInfo("website", val)} />
+            </div>
+            <Textarea label="Professional Summary" rows={4} value={resumeData.personalInfo.summary} onChange={(val) => updatePersonalInfo("summary", val)} />
           </div>
-        </Accordion>
+        )}
 
         {/* Experience */}
-        <Accordion
-          title="Experience"
-          isOpen={openSection === "experience"}
-          onToggle={() =>
-            setOpenSection(openSection === "experience" ? "" : "experience")
-          }
-          isCompleted={isExperienceComplete}
-        >
-          <div className="space-y-4">
+        {activeTab === "experience" && (
+          <div className="space-y-4 max-w-2xl">
             {resumeData.experience.map((exp) => (
-              <div
-                key={exp.id}
-                className="bg-linear-to-br from-slate-800 to-slate-900 p-4 rounded-lg space-y-3 border border-slate-700 hover:border-slate-600 transition"
-              >
-                <div className="flex justify-between items-start">
-                  <h3 className="text-sm font-medium text-blue-400">
-                    Experience Entry
-                  </h3>
-                  <button
-                    onClick={() => deleteExperience(exp.id)}
-                    className="text-red-400 hover:text-red-300 text-sm px-2 py-1 rounded hover:bg-red-950 transition"
-                  >
-                    Delete
-                  </button>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <Input
-                    label="Position"
-                    value={exp.position}
-                    onChange={(val) =>
-                      updateExperience(exp.id, "position", val)
-                    }
-                  />
-                  <Input
-                    label="Company"
-                    value={exp.company}
-                    onChange={(val) => updateExperience(exp.id, "company", val)}
-                  />
-                </div>
-                <Input
-                  label="Location"
-                  value={exp.location}
-                  onChange={(val) => updateExperience(exp.id, "location", val)}
-                />
-                <div className="grid grid-cols-2 gap-3">
-                  <Input
-                    label="Start Date"
-                    type="month"
-                    value={exp.startDate}
-                    onChange={(val) =>
-                      updateExperience(exp.id, "startDate", val)
-                    }
-                  />
-                  <Input
-                    label="End Date"
-                    type="month"
-                    value={exp.endDate}
-                    onChange={(val) => updateExperience(exp.id, "endDate", val)}
-                    disabled={exp.current}
-                  />
-                </div>
-                <label className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={exp.current}
-                    onChange={(e) =>
-                      updateExperience(exp.id, "current", e.target.checked)
-                    }
-                    className="rounded bg-slate-700 border-slate-600 text-blue-500 focus:ring-blue-500"
-                  />
-                  Currently working here
-                </label>
-                <Textarea
-                  label="Responsibilities (one per line)"
-                  rows={4}
-                  value={exp.description.join("\n")}
-                  onChange={(val) =>
-                    updateExperience(exp.id, "description", val.split("\n"))
+              <Card key={exp.id} hover>
+                <CardHeader
+                  title={
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" checked={exp.visible ?? true} onChange={(e) => updateExperience(exp.id, "visible", e.target.checked)} className="rounded bg-white border-gray-300 text-blue-600 focus:ring-blue-500" />
+                      <span>{exp.position || "New Experience"}</span>
+                    </div>
                   }
+                  action={<Button onClick={() => deleteExperience(exp.id)} variant="ghost" size="sm" icon={Trash2} className="text-red-600 hover:bg-red-50">Delete</Button>}
                 />
-              </div>
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Input label="Position" value={exp.position} onChange={(val) => updateExperience(exp.id, "position", val)} />
+                    <Input label="Company" value={exp.company} onChange={(val) => updateExperience(exp.id, "company", val)} />
+                  </div>
+                  <Input label="Location" value={exp.location} onChange={(val) => updateExperience(exp.id, "location", val)} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Input label="Start Date" type="month" value={exp.startDate} onChange={(val) => updateExperience(exp.id, "startDate", val)} />
+                    <Input label="End Date" type="month" value={exp.endDate} onChange={(val) => updateExperience(exp.id, "endDate", val)} disabled={exp.current} />
+                  </div>
+                  <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                    <input type="checkbox" checked={exp.current} onChange={(e) => updateExperience(exp.id, "current", e.target.checked)} className="rounded bg-white border-gray-300 text-blue-600 focus:ring-blue-500" />
+                    Currently working here
+                  </label>
+                  <Textarea label="Responsibilities (one per line)" rows={4} value={exp.description.join("\n")} onChange={(val) => updateExperience(exp.id, "description", val.split("\n"))} />
+                </div>
+              </Card>
             ))}
+            <Button onClick={addExperience} variant="outline" size="md" icon={Plus} className="w-full border-blue-300 text-blue-600 hover:border-blue-400 hover:bg-blue-50">
+              Add Experience
+            </Button>
           </div>
-          <button
-            onClick={addExperience}
-            className="mb-4 w-full py-2 text-sm text-blue-400 hover:text-blue-300 border border-blue-500/30 hover:border-blue-500/50 rounded-lg hover:bg-blue-500/10 transition"
-          >
-            + Add Experience
-          </button>
-        </Accordion>
+        )}
 
         {/* Education */}
-        <Accordion
-          title="Education"
-          isOpen={openSection === "education"}
-          onToggle={() =>
-            setOpenSection(openSection === "education" ? "" : "education")
-          }
-          isCompleted={isEducationComplete}
-        >
-          <div className="space-y-4">
+        {activeTab === "education" && (
+          <div className="space-y-4 max-w-2xl">
             {resumeData.education.map((edu) => (
-              <div
-                key={edu.id}
-                className="bg-linear-to-br from-slate-800 to-slate-900 p-4 rounded-lg space-y-3 border border-slate-700 hover:border-slate-600 transition"
-              >
-                <div className="flex justify-between items-start">
-                  <h3 className="text-sm font-medium text-blue-400">
-                    Education Entry
-                  </h3>
-                  <button
-                    onClick={() => deleteEducation(edu.id)}
-                    className="text-red-400 hover:text-red-300 text-sm px-2 py-1 rounded hover:bg-red-950 transition"
-                  >
-                    Delete
-                  </button>
+              <Card key={edu.id} hover>
+                <CardHeader
+                  title={
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" checked={edu.visible ?? true} onChange={(e) => updateEducation(edu.id, "visible", e.target.checked as any)} className="rounded bg-white border-gray-300 text-blue-600 focus:ring-blue-500" />
+                      <span>{edu.institution || "New Education"}</span>
+                    </div>
+                  }
+                  action={<Button onClick={() => deleteEducation(edu.id)} variant="ghost" size="sm" icon={Trash2} className="text-red-600 hover:bg-red-50">Delete</Button>}
+                />
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Input label="Degree" value={edu.degree} onChange={(val) => updateEducation(edu.id, "degree", val)} />
+                    <Input label="Field of Study" value={edu.field} onChange={(val) => updateEducation(edu.id, "field", val)} />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Input label="Institution" value={edu.institution} onChange={(val) => updateEducation(edu.id, "institution", val)} />
+                    <Input label="Location" value={edu.location} onChange={(val) => updateEducation(edu.id, "location", val)} />
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <Input label="Start Date" type="month" value={edu.startDate} onChange={(val) => updateEducation(edu.id, "startDate", val)} />
+                    <Input label="End Date" type="month" value={edu.endDate} onChange={(val) => updateEducation(edu.id, "endDate", val)} />
+                    <Input label="GPA (optional)" value={edu.gpa || ""} onChange={(val) => updateEducation(edu.id, "gpa", val)} />
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <Input
-                    label="Degree"
-                    value={edu.degree}
-                    onChange={(val) => updateEducation(edu.id, "degree", val)}
-                  />
-                  <Input
-                    label="Field of Study"
-                    value={edu.field}
-                    onChange={(val) => updateEducation(edu.id, "field", val)}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <Input
-                    label="Institution"
-                    value={edu.institution}
-                    onChange={(val) =>
-                      updateEducation(edu.id, "institution", val)
-                    }
-                  />
-                  <Input
-                    label="Location"
-                    value={edu.location}
-                    onChange={(val) => updateEducation(edu.id, "location", val)}
-                  />
-                </div>
-                <div className="grid grid-cols-3 gap-3">
-                  <Input
-                    label="Start Date"
-                    type="month"
-                    value={edu.startDate}
-                    onChange={(val) =>
-                      updateEducation(edu.id, "startDate", val)
-                    }
-                  />
-                  <Input
-                    label="End Date"
-                    type="month"
-                    value={edu.endDate}
-                    onChange={(val) => updateEducation(edu.id, "endDate", val)}
-                  />
-                  <Input
-                    label="GPA (optional)"
-                    value={edu.gpa || ""}
-                    onChange={(val) => updateEducation(edu.id, "gpa", val)}
-                  />
-                </div>
-              </div>
+              </Card>
             ))}
+            <Button onClick={addEducation} variant="outline" size="md" icon={Plus} className="w-full border-blue-300 text-blue-600 hover:border-blue-400 hover:bg-blue-50">
+              Add Education
+            </Button>
           </div>
-          <button
-            onClick={addEducation}
-            className="mb-4 w-full py-2 text-sm text-blue-400 hover:text-blue-300 border border-blue-500/30 hover:border-blue-500/50 rounded-lg hover:bg-blue-500/10 transition"
-          >
-            + Add Education
-          </button>
-        </Accordion>
+        )}
 
         {/* Projects */}
-        <Accordion
-          title="Projects"
-          isOpen={openSection === "projects"}
-          onToggle={() =>
-            setOpenSection(openSection === "projects" ? "" : "projects")
-          }
-          isCompleted={isProjectsComplete}
-        >
-          <div className="space-y-4">
+        {activeTab === "projects" && (
+          <div className="space-y-4 max-w-2xl">
             {resumeData.projects.map((proj) => (
-              <div
-                key={proj.id}
-                className="bg-linear-to-br from-slate-800 to-slate-900 p-4 rounded-lg space-y-3 border border-slate-700 hover:border-slate-600 transition"
-              >
-                <div className="flex justify-between items-start">
-                  <h3 className="text-sm font-medium text-blue-400">
-                    Project Entry
-                  </h3>
-                  <button
-                    onClick={() => deleteProject(proj.id)}
-                    className="text-red-400 hover:text-red-300 text-sm px-2 py-1 rounded hover:bg-red-950 transition"
-                  >
-                    Delete
-                  </button>
-                </div>
-                <Input
-                  label="Project Name"
-                  value={proj.name}
-                  onChange={(val) => updateProject(proj.id, "name", val)}
-                />
-                <Textarea
-                  label="Description"
-                  rows={3}
-                  value={proj.description}
-                  onChange={(val) => updateProject(proj.id, "description", val)}
-                />
-                <Input
-                  label="Technologies (comma separated)"
-                  value={proj.technologies.join(", ")}
-                  onChange={(val) =>
-                    updateProject(
-                      proj.id,
-                      "technologies",
-                      val.split(",").map((t) => t.trim()),
-                    )
+              <Card key={proj.id} hover>
+                <CardHeader
+                  title={
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" checked={proj.visible ?? true} onChange={(e) => updateProject(proj.id, "visible", e.target.checked)} className="rounded bg-white border-gray-300 text-blue-600 focus:ring-blue-500" />
+                      <span>{proj.name || "New Project"}</span>
+                    </div>
                   }
+                  action={<Button onClick={() => deleteProject(proj.id)} variant="ghost" size="sm" icon={Trash2} className="text-red-600 hover:bg-red-50">Delete</Button>}
                 />
-                <Input
-                  label="Link (optional)"
-                  value={proj.link || ""}
-                  onChange={(val) => updateProject(proj.id, "link", val)}
-                />
-              </div>
+                <div className="space-y-3">
+                  <Input label="Project Name" value={proj.name} onChange={(val) => updateProject(proj.id, "name", val)} />
+                  <Textarea label="Description" rows={3} value={proj.description} onChange={(val) => updateProject(proj.id, "description", val)} />
+                  <Input label="Technologies (comma separated)" value={proj.technologies.join(", ")} onChange={(val) => updateProject(proj.id, "technologies", val.split(",").map((t) => t.trim()))} />
+                  <Input label="Link (optional)" value={proj.link || ""} onChange={(val) => updateProject(proj.id, "link", val)} />
+                </div>
+              </Card>
             ))}
+            <Button onClick={addProject} variant="outline" size="md" icon={Plus} className="w-full border-blue-300 text-blue-600 hover:border-blue-400 hover:bg-blue-50">
+              Add Project
+            </Button>
           </div>
-          <button
-            onClick={addProject}
-            className="mb-4 w-full py-2 text-sm text-blue-400 hover:text-blue-300 border border-blue-500/30 hover:border-blue-500/50 rounded-lg hover:bg-blue-500/10 transition"
-          >
-            + Add Project
-          </button>
-        </Accordion>
+        )}
 
         {/* Skills */}
-        <Accordion
-          title="Skills"
-          isOpen={openSection === "skills"}
-          onToggle={() =>
-            setOpenSection(openSection === "skills" ? "" : "skills")
-          }
-          isCompleted={isSkillsComplete}
-        >
-          <div className="space-y-3">
+        {activeTab === "skills" && (
+          <div className="space-y-3 max-w-2xl">
             <div className="flex flex-wrap gap-2">
-              {resumeData.skills.map((skill, index) => (
-                <span
-                  key={index}
-                  className="bg-slate-700 text-white px-3 py-1.5 rounded-full text-sm flex items-center gap-2 hover:bg-slate-600 transition"
-                >
-                  {skill}
-                  <button
-                    onClick={() => deleteSkill(index)}
-                    className="text-red-400 hover:text-red-300"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
+              {resumeData.skills.map((skill, index) => {
+                const isVisible = resumeData.skillsVisibility?.[skill] ?? true;
+                return (
+                  <span key={index} className={`px-3 py-1.5 rounded-full text-sm flex items-center gap-2 transition ${isVisible ? "bg-blue-100 text-blue-800 hover:bg-blue-200" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
+                    <input type="checkbox" checked={isVisible} onChange={() => toggleSkillVisibility(skill)} className="rounded bg-white border-gray-300 text-blue-600 focus:ring-blue-500" />
+                    {skill}
+                    <button onClick={() => deleteSkill(index)} className="text-red-600 hover:text-red-700">×</button>
+                  </span>
+                );
+              })}
             </div>
-            <Input
-              label="Add Skill"
-              placeholder="Press Enter to add"
-              onChange={() => console.log("changed")}
-              onKeyDown={(e: any) => {
-                if (e.key === "Enter" && e.target.value.trim()) {
-                  addSkill(e.target.value);
-                  e.target.value = "";
-                }
-              }}
-            />
+            <div className="relative">
+              <Input
+                label="Add Skill"
+                placeholder="Type to search or press Enter to add"
+                value={skillInput}
+                onChange={(val) => { setSkillInput(val); setShowSuggestions(true); }}
+                onKeyDown={(e: any) => {
+                  if (e.key === "Enter" && skillInput.trim()) {
+                    addSkill(skillInput);
+                    setSkillInput("");
+                    setShowSuggestions(false);
+                  }
+                }}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              />
+              {showSuggestions && filteredSkills.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
+                  {filteredSkills.map((skill) => (
+                    <button key={skill} onClick={() => { addSkill(skill); setSkillInput(""); setShowSuggestions(false); }} className="w-full text-left px-3 py-2 hover:bg-blue-50 text-sm">
+                      {skill}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </Accordion>
+        )}
+
+        {/* Certifications */}
+        {activeTab === "certifications" && (
+          <div className="space-y-4 max-w-2xl">
+            {(resumeData.certifications || []).map((cert) => (
+              <Card key={cert.id} hover>
+                <CardHeader
+                  title={
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" checked={cert.visible ?? true} onChange={(e) => updateCertification(cert.id, "visible", e.target.checked)} className="rounded bg-white border-gray-300 text-blue-600 focus:ring-blue-500" />
+                      <span>{cert.name || "New Certification"}</span>
+                    </div>
+                  }
+                  action={<Button onClick={() => deleteCertification(cert.id)} variant="ghost" size="sm" icon={Trash2} className="text-red-600 hover:bg-red-50">Delete</Button>}
+                />
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Input label="Certification Name" value={cert.name} onChange={(val) => updateCertification(cert.id, "name", val)} />
+                    <Input label="Issuer" value={cert.issuer} onChange={(val) => updateCertification(cert.id, "issuer", val)} />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Input label="Date" type="month" value={cert.date} onChange={(val) => updateCertification(cert.id, "date", val)} />
+                    <Input label="Credential ID (optional)" value={cert.credentialId || ""} onChange={(val) => updateCertification(cert.id, "credentialId", val)} />
+                  </div>
+                  <Input label="Link (optional)" value={cert.link || ""} onChange={(val) => updateCertification(cert.id, "link", val)} />
+                </div>
+              </Card>
+            ))}
+            <Button onClick={addCertification} variant="outline" size="md" icon={Plus} className="w-full border-blue-300 text-blue-600 hover:border-blue-400 hover:bg-blue-50">
+              Add Certification
+            </Button>
+          </div>
+        )}
+
+        {/* Languages */}
+        {activeTab === "languages" && (
+          <div className="space-y-4 max-w-2xl">
+            {(resumeData.languages || []).map((lang) => (
+              <Card key={lang.id} hover>
+                <CardHeader
+                  title={
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" checked={lang.visible ?? true} onChange={(e) => updateLanguage(lang.id, "visible", e.target.checked)} className="rounded bg-white border-gray-300 text-blue-600 focus:ring-blue-500" />
+                      <span>{lang.name || "New Language"}</span>
+                    </div>
+                  }
+                  action={<Button onClick={() => deleteLanguage(lang.id)} variant="ghost" size="sm" icon={Trash2} className="text-red-600 hover:bg-red-50">Delete</Button>}
+                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Input label="Language" value={lang.name} onChange={(val) => updateLanguage(lang.id, "name", val)} />
+                  <div className="relative">
+                    <select
+                      value={lang.proficiency}
+                      onChange={(e) => updateLanguage(lang.id, "proficiency", e.target.value)}
+                      className="peer w-full bg-white border border-gray-300 rounded-lg px-3 pt-5 pb-1.5 text-sm text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition appearance-none"
+                    >
+                      <option value="">Select level</option>
+                      <option>Native</option>
+                      <option>Fluent</option>
+                      <option>Advanced</option>
+                      <option>Intermediate</option>
+                      <option>Beginner</option>
+                    </select>
+                    <label className="absolute left-3 top-1.5 text-[10px] text-gray-600">Proficiency</label>
+                  </div>
+                </div>
+              </Card>
+            ))}
+            <Button onClick={addLanguage} variant="outline" size="md" icon={Plus} className="w-full border-blue-300 text-blue-600 hover:border-blue-400 hover:bg-blue-50">
+              Add Language
+            </Button>
+          </div>
+        )}
+
       </div>
     </div>
   );

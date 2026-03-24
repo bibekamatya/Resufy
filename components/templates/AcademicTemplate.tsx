@@ -5,7 +5,14 @@ interface AcademicTemplateProps {
 }
 
 export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
-  const { personalInfo, experience, education, projects, skills } = data;
+  const { personalInfo, experience, education, projects, skills, skillsVisibility, certifications, languages } = data;
+  
+  const visibleExperience = experience.filter(exp => exp.visible !== false);
+  const visibleProjects = projects.filter(proj => proj.visible !== false);
+  const visibleSkills = skills.filter(skill => (skillsVisibility?.[skill] ?? true));
+  const visibleCertifications = (certifications || []).filter(cert => cert.visible !== false);
+  const visibleLanguages = (languages || []).filter(lang => lang.visible !== false);
+  const visibleEducation = education.filter(edu => edu.visible !== false);
 
   return (
     <div className="bg-white text-gray-900 w-full h-full p-10">
@@ -50,13 +57,13 @@ export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
         )}
 
         {/* Education (Highlighted for Academic CV) */}
-        {education.length > 0 && (
+        {visibleEducation.length > 0 && (
           <div>
             <h2 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">
               EDUCATION
             </h2>
             <div className="space-y-4">
-              {education.map((edu) => (
+              {visibleEducation.map((edu) => (
                 <div key={edu.id} className="pb-4 border-b border-gray-100">
                   <div className="flex justify-between items-start mb-1">
                     <div>
@@ -80,13 +87,13 @@ export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
         )}
 
         {/* Experience */}
-        {experience.length > 0 && (
+        {visibleExperience.length > 0 && (
           <div>
             <h2 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">
               EXPERIENCE
             </h2>
             <div className="space-y-4">
-              {experience.map((exp) => (
+              {visibleExperience.map((exp) => (
                 <div key={exp.id} className="pb-4 border-b border-gray-100">
                   <div className="flex justify-between items-start mb-1">
                     <div>
@@ -122,27 +129,20 @@ export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
         {/* Projects & Skills Grid */}
         <div className="grid grid-cols-2 gap-8">
           {/* Projects */}
-          {projects.length > 0 && (
+          {visibleProjects.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">
-                PROJECTS
-              </h2>
+              <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">PROJECTS</h2>
               <div className="space-y-3">
-                {projects.map((proj) => (
+                {visibleProjects.map((proj) => (
                   <div key={proj.id} className="pb-3 border-b border-gray-100">
                     <h3 className="font-bold text-gray-900">{proj.name}</h3>
-                    <p className="text-sm text-gray-700 mt-1">
-                      {proj.description}
-                    </p>
+                    <p className="text-sm text-gray-700 mt-1">{proj.description}</p>
                     {proj.technologies.length > 0 && (
                       <p className="text-xs text-gray-600 mt-1">
-                        <span className="font-medium">Technologies:</span>{" "}
-                        {proj.technologies.join(", ")}
+                        <span className="font-medium">Technologies:</span> {proj.technologies.join(", ")}
                       </p>
                     )}
-                    {proj.link && (
-                      <p className="text-xs text-blue-600 mt-1">{proj.link}</p>
-                    )}
+                    {proj.link && <p className="text-xs text-blue-600 mt-1">{proj.link}</p>}
                   </div>
                 ))}
               </div>
@@ -150,21 +150,50 @@ export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
           )}
 
           {/* Skills */}
-          {skills.length > 0 && (
+          {visibleSkills.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">
-                TECHNICAL SKILLS
-              </h2>
+              <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">TECHNICAL SKILLS</h2>
               <div className="space-y-2">
-                {skills.map((skill, idx) => (
-                  <div key={idx} className="text-gray-700">
-                    • {skill}
-                  </div>
+                {visibleSkills.map((skill, idx) => (
+                  <div key={idx} className="text-gray-700">• {skill}</div>
                 ))}
               </div>
             </div>
           )}
         </div>
+
+        {/* Certifications */}
+        {visibleCertifications.length > 0 && (
+          <div>
+            <h2 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">CERTIFICATIONS</h2>
+            <div className="space-y-3">
+              {visibleCertifications.map((cert) => (
+                <div key={cert.id} className="flex justify-between items-start pb-3 border-b border-gray-100">
+                  <div>
+                    <h3 className="font-bold text-gray-900">{cert.name}</h3>
+                    <p className="text-sm text-gray-700">{cert.issuer}</p>
+                    {cert.credentialId && <p className="text-xs text-gray-500">ID: {cert.credentialId}</p>}
+                  </div>
+                  {cert.date && <span className="text-sm text-gray-600">{cert.date}</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Languages */}
+        {visibleLanguages.length > 0 && (
+          <div>
+            <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">LANGUAGES</h2>
+            <div className="flex flex-wrap gap-4">
+              {visibleLanguages.map((lang) => (
+                <span key={lang.id} className="text-gray-700">
+                  <span className="font-semibold">{lang.name}:</span> {lang.proficiency}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

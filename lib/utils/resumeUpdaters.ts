@@ -1,10 +1,10 @@
-import { ResumeData, PersonalInfo, Experience, Education, Project } from "@/lib/types";
+import { ResumeData, PersonalInfo, Experience, Education, Project, Certification, Language, SectionKey } from "@/lib/types";
 
 export const createResumeUpdaters = (
-  setResumeData: React.Dispatch<React.SetStateAction<ResumeData>>
+  setResumeData: (updater: ResumeData | ((prev: ResumeData) => ResumeData)) => void
 ) => {
   // Update personal info fields
-  const updatePersonalInfo = (field: keyof PersonalInfo, value: string) => {
+  const updatePersonalInfo = (field: keyof PersonalInfo, value: string | boolean) => {
     setResumeData((prev) => ({
       ...prev,
       personalInfo: { ...prev.personalInfo, [field]: value },
@@ -22,6 +22,7 @@ export const createResumeUpdaters = (
       endDate: "",
       current: false,
       description: [],
+      visible: true,
     };
     setResumeData((prev) => ({
       ...prev,
@@ -91,6 +92,7 @@ export const createResumeUpdaters = (
       description: "",
       technologies: [],
       link: "",
+      visible: true,
     };
     setResumeData((prev) => ({
       ...prev,
@@ -134,6 +136,84 @@ export const createResumeUpdaters = (
     }));
   };
 
+  // Toggle skill visibility
+  const toggleSkillVisibility = (skill: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      skillsVisibility: {
+        ...prev.skillsVisibility,
+        [skill]: !(prev.skillsVisibility?.[skill] ?? true),
+      },
+    }));
+  };
+
+  // Add certification
+  const addCertification = () => {
+    const newCert: Certification = {
+      id: Date.now().toString(),
+      name: "",
+      issuer: "",
+      date: "",
+      credentialId: "",
+      link: "",
+      visible: true,
+    };
+    setResumeData((prev) => ({
+      ...prev,
+      certifications: [...(prev.certifications || []), newCert],
+    }));
+  };
+
+  const updateCertification = (id: string, field: keyof Certification, value: any) => {
+    setResumeData((prev) => ({
+      ...prev,
+      certifications: (prev.certifications || []).map((cert) =>
+        cert.id === id ? { ...cert, [field]: value } : cert
+      ),
+    }));
+  };
+
+  const deleteCertification = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      certifications: (prev.certifications || []).filter((cert) => cert.id !== id),
+    }));
+  };
+
+  // Add language
+  const addLanguage = () => {
+    const newLang: Language = {
+      id: Date.now().toString(),
+      name: "",
+      proficiency: "",
+      visible: true,
+    };
+    setResumeData((prev) => ({
+      ...prev,
+      languages: [...(prev.languages || []), newLang],
+    }));
+  };
+
+  const updateLanguage = (id: string, field: keyof Language, value: any) => {
+    setResumeData((prev) => ({
+      ...prev,
+      languages: (prev.languages || []).map((lang) =>
+        lang.id === id ? { ...lang, [field]: value } : lang
+      ),
+    }));
+  };
+
+  const deleteLanguage = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      languages: (prev.languages || []).filter((lang) => lang.id !== id),
+    }));
+  };
+
+  const reorderSections = (order: SectionKey[]) => {
+    setResumeData((prev) => ({ ...prev, sectionOrder: order }));
+  };
+
   return {
     updatePersonalInfo,
     addExperience,
@@ -147,5 +227,13 @@ export const createResumeUpdaters = (
     deleteProject,
     addSkill,
     deleteSkill,
+    toggleSkillVisibility,
+    addCertification,
+    updateCertification,
+    deleteCertification,
+    addLanguage,
+    updateLanguage,
+    deleteLanguage,
+    reorderSections,
   };
 };

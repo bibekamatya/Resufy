@@ -1,5 +1,16 @@
 import { ResumeData } from "../types";
 
+export const blankResumeData: ResumeData = {
+  personalInfo: { fullName: "", email: "", phone: "", location: "", linkedin: "", website: "", summary: "" },
+  experience: [],
+  education: [],
+  skills: [],
+  projects: [],
+  certifications: [],
+  languages: [],
+  skillsVisibility: {},
+};
+
 export const sampleResumeData: ResumeData = {
   personalInfo: {
     fullName: "Marcus Rodriguez",
@@ -20,6 +31,7 @@ export const sampleResumeData: ResumeData = {
       startDate: "2021-09",
       endDate: "",
       current: true,
+      visible: true,
       description: [
         "Manage a team of 12 engineers working on cloud infrastructure products",
         "Oversaw migration of monolith to microservices, reducing downtime by 99.9%",
@@ -36,6 +48,7 @@ export const sampleResumeData: ResumeData = {
       startDate: "2019-04",
       endDate: "2021-08",
       current: false,
+      visible: true,
       description: [
         "Designed and implemented high-throughput API serving 2M+ requests daily",
         "Built real-time notification system processing 10K events per second",
@@ -52,6 +65,7 @@ export const sampleResumeData: ResumeData = {
       startDate: "2016-07",
       endDate: "2019-03",
       current: false,
+      visible: true,
       description: [
         "Developed gaming platform with 500K+ registered users",
         "Built real-time multiplayer functionality using WebSockets",
@@ -114,6 +128,7 @@ export const sampleResumeData: ResumeData = {
         "Prometheus",
       ],
       link: "github.com/marcus/devops-framework",
+      visible: true,
     },
     {
       id: "proj2",
@@ -128,6 +143,7 @@ export const sampleResumeData: ResumeData = {
         "Grafana",
       ],
       link: "github.com/marcus/autoscale-manager",
+      visible: true,
     },
     {
       id: "proj3",
@@ -136,6 +152,31 @@ export const sampleResumeData: ResumeData = {
         "AI-powered tool that analyzes pull requests and suggests improvements, adopted by 200+ developers across the organization.",
       technologies: ["Python", "React", "OpenAI API", "PostgreSQL", "FastAPI"],
       link: "github.com/marcus/code-review-ai",
+      visible: true,
     },
+  ],
+  skillsVisibility: {},
+  certifications: [
+    {
+      id: "cert1",
+      name: "AWS Certified Solutions Architect",
+      issuer: "Amazon Web Services",
+      date: "2023-04",
+      credentialId: "AWS-SAA-123456",
+      visible: true,
+    },
+    {
+      id: "cert2",
+      name: "Certified Kubernetes Administrator",
+      issuer: "Cloud Native Computing Foundation",
+      date: "2022-11",
+      credentialId: "CKA-789012",
+      visible: true,
+    },
+  ],
+  languages: [
+    { id: "lang1", name: "English", proficiency: "Native", visible: true },
+    { id: "lang2", name: "Spanish", proficiency: "Fluent", visible: true },
+    { id: "lang3", name: "Portuguese", proficiency: "Conversational", visible: true },
   ],
 };

@@ -13,21 +13,21 @@ interface AccordionProps {
 
 export const Accordion = ({ title, children, isOpen, onToggle, isCompleted = false }: AccordionProps) => {
   return (
-    <div className="border border-slate-700 rounded-lg overflow-hidden">
+    <div className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between p-4 bg-slate-800 hover:bg-slate-750 transition text-left"
+        className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition text-left"
       >
         <div className="flex items-center gap-3">
           {isCompleted && (
             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
           )}
-          <h2 className="text-lg font-semibold text-white">{title}</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
         </div>
         <motion.span
           animate={{ rotate: isOpen ? 45 : 0 }}
           transition={{ duration: 0.2 }}
-          className="text-slate-400 text-xl"
+          className="text-gray-500 text-xl"
         >
           +
         </motion.span>
@@ -41,7 +41,7 @@ export const Accordion = ({ title, children, isOpen, onToggle, isCompleted = fal
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="p-4 bg-slate-900">{children}</div>
+            <div className="p-4 bg-white">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
