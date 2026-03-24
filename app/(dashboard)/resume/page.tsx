@@ -8,7 +8,7 @@ import { CreativeTemplate } from "@/components/templates/CreativeTemplate";
 import { ModernTemplate } from "@/components/templates/ModernTemplate";
 import { TemplateType } from "@/lib/types";
 import { useProfile } from "./hooks";
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 
 const templates: { id: TemplateType; title: string; description: string }[] = [
   { id: "classic", title: "Classic", description: "Traditional professional layout" },
@@ -19,8 +19,24 @@ const templates: { id: TemplateType; title: string; description: string }[] = [
   { id: "balanced", title: "Balanced", description: "Evenly distributed two-column" },
 ];
 
+const RESUME_WIDTH = 794;
+
 export default function ResumePage() {
   const { resumeData, currentTemplate, setCurrentTemplate, zoom } = useProfile();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [mobileScale, setMobileScale] = useState(1);
+
+  useEffect(() => {
+    const update = () => {
+      if (containerRef.current && window.innerWidth < 1024) {
+        const available = containerRef.current.clientWidth - 32; // 16px padding each side
+        setMobileScale(available / RESUME_WIDTH);
+      }
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   const renderTemplate = () => {
     const templateComponents: Record<string, React.ReactElement> = {
@@ -35,17 +51,52 @@ export default function ResumePage() {
   };
 
   return (
-    <div className="flex h-full min-h-0">
-      {/* Center - only this scrolls */}
-      <div className="flex-1 overflow-auto p-4 sm:p-6">
-        <div className="mx-auto pb-32 lg:pb-10" style={{ width: `${794 * zoom / 100}px` }}>
-          <div id="resume-preview" className="bg-white shadow-2xl" style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top left', width: '794px' }}>
+    <div className="flex h-full min-h-0 flex-col lg:flex-row">
+      {/* Mobile Template Selector */}
+      <div className="lg:hidden flex items-center gap-2 overflow-x-auto px-3 py-2 bg-white border-b border-gray-200 shrink-0 scrollbar-hide">
+        {templates.map((template) => (
+          <button
+            key={template.id}
+            onClick={() => setCurrentTemplate(template.id)}
+            className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+              currentTemplate === template.id
+                ? "bg-blue-600 text-white shadow-sm"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            {template.title}
+          </button>
+        ))}
+      </div>
+
+      {/* Preview area */}
+      <div ref={containerRef} className="flex-1 overflow-auto p-4 pb-32 lg:p-6 lg:pb-10" style={{ WebkitOverflowScrolling: "touch" }}>
+        {/* Mobile: scale to fit width, no x-scroll */}
+        <div className="lg:hidden" style={{ height: `${RESUME_WIDTH * 1.414 * mobileScale}px` }}>
+          <div
+            id="resume-preview"
+            className="bg-white shadow-xl origin-top-left"
+            style={{ width: RESUME_WIDTH, transform: `scale(${mobileScale}) translateZ(0)`, willChange: "transform" }}
+          >
             {renderTemplate()}
+          </div>
+        </div>
+
+        {/* Desktop: respect zoom control */}
+        <div className="hidden lg:block">
+          <div className="mx-auto pb-10" style={{ width: `${RESUME_WIDTH * zoom / 100}px` }}>
+            <div
+              id="resume-preview"
+              className="bg-white shadow-2xl origin-top-left"
+              style={{ width: RESUME_WIDTH, transform: `scale(${zoom / 100})` }}
+            >
+              {renderTemplate()}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Right Sidebar - fixed, no scroll */}
+      {/* Desktop template sidebar */}
       <aside className="hidden lg:flex flex-col w-52 shrink-0 border-l border-gray-200 bg-gray-50 p-3">
         <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Templates</h3>
         <div className="flex flex-col gap-2">
@@ -69,27 +120,6 @@ export default function ResumePage() {
           ))}
         </div>
       </aside>
-
-      {/* Mobile Template Selector - Fixed Bottom */}
-      <div className="lg:hidden fixed bottom-14 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
-        <div className="p-3">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            {templates.map((template) => (
-              <button
-                key={template.id}
-                onClick={() => setCurrentTemplate(template.id)}
-                className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  currentTemplate === template.id
-                    ? "bg-blue-600 text-white shadow-md"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                {template.title}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

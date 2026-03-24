@@ -108,9 +108,7 @@ export function AppHeader() {
                   </Link>
                 </nav>
               )}
-              <button onClick={handleGetStarted}>
-                <Button variant="primary" size="md" icon={FileText}>Get Started</Button>
-              </button>
+              <Button variant="primary" size="md" icon={FileText} onClick={handleGetStarted}>Get Started</Button>
             </>
           )}
         </div>

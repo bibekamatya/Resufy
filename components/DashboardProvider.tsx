@@ -4,7 +4,8 @@ import { createContext, useContext, useState, useEffect, useRef, ReactNode } fro
 import { usePathname } from "next/navigation";
 import { ResumeData, ResumeProfile } from "@/lib/types";
 import { sampleResumeData, emptyResumeData } from "@/lib/data";
-import { FileText, Target, Edit3, Eye, Download, ZoomIn, ZoomOut, ChevronDown, LogOut, Check, Loader2 } from "lucide-react";
+import { FileText, Target, Edit3, Eye, Download, ZoomIn, ZoomOut, ChevronDown, LogOut, Check, Loader2, Menu } from "lucide-react";
+import { MobileBottomSheet } from "@/components/ui/MobileBottomSheet";
 import Link from "next/link";
 import { getResumes, saveResume, createResume, deleteResume, duplicateResume, renameResume, shareResume } from "@/lib/actions/resume";
 import toast from "react-hot-toast";
@@ -77,6 +78,7 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [exporting, setExporting] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [zoom, setZoom] = useState(100);
   const zoomIn = () => setZoom(z => Math.min(z + 10, 150));
   const zoomOut = () => setZoom(z => Math.max(z - 10, 50));
@@ -434,33 +436,69 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
           <div className="flex-1 min-h-0">{children}</div>
         </div>
 
+        <MobileBottomSheet isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
+          <div className="p-4 space-y-4">
+            <Link href="/" className="flex items-center gap-3 pb-3 border-b border-gray-100" onClick={() => setSidebarOpen(false)}>
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-md shadow-blue-500/20">
+                <FileText className="h-4 w-4 text-white" strokeWidth={2.5} />
+              </div>
+              <div>
+                <div className="text-base font-bold text-gray-900 leading-tight">Resufy</div>
+                <div className="text-[10px] text-gray-400 leading-tight">Resume Builder</div>
+              </div>
+            </Link>
+            <ProfileSelector
+              profiles={profiles}
+              currentProfileId={currentProfileId}
+              onSelectProfile={(id) => { selectProfile(id); setSidebarOpen(false); }}
+              onCreateProfile={handleCreateProfile}
+              onDeleteProfile={handleDeleteProfile}
+              onRenameProfile={handleRenameProfile}
+              onDuplicateProfile={handleDuplicateProfile}
+              onShareProfile={handleShareProfile}
+            />
+            <ATSScore resumeData={resumeData} />
+            <div className="pt-2 border-t border-gray-100">
+              <UserFooter user={user} />
+            </div>
+          </div>
+        </MobileBottomSheet>
+
         {/* Mobile Bottom Navigation */}
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 z-40 shadow-lg">
-          <div className="flex items-center justify-around">
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+          <div className="flex items-center h-12 px-2">
             <Link
               href="/builder"
-              className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${
-                pathname === "/builder" ? "text-blue-600 bg-blue-50" : "text-gray-600"
+              className={`flex-1 flex flex-col items-center justify-center gap-0.5 h-full transition-colors ${
+                pathname === "/builder" ? "text-blue-600" : "text-gray-400"
               }`}
             >
-              <Edit3 className="h-5 w-5" />
-              <span className="text-xs font-medium">Editor</span>
+              <Edit3 className="h-4 w-4" />
+              <span className="text-[10px] font-medium">Editor</span>
             </Link>
-            {pathname === "/builder" && (
-              <span className="flex flex-col items-center gap-1 px-4 py-2 text-xs text-gray-400">
-                {saving ? <><Loader2 className="h-4 w-4 animate-spin" />Saving</> : !hasChanges ? <><Check className="h-4 w-4 text-green-500" />Saved</> : null}
-              </span>
-            )}
             <Link
               href="/resume"
-              className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${
-                pathname === "/resume" ? "text-blue-600 bg-blue-50" : "text-gray-600"
+              className={`flex-1 flex flex-col items-center justify-center gap-0.5 h-full transition-colors ${
+                pathname === "/resume" ? "text-blue-600" : "text-gray-400"
               }`}
             >
-              <Eye className="h-5 w-5" />
-              <span className="text-xs font-medium">Preview</span>
+              <Eye className="h-4 w-4" />
+              <span className="text-[10px] font-medium">Preview</span>
             </Link>
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="flex-1 flex flex-col items-center justify-center gap-0.5 h-full text-gray-400"
+            >
+              <Menu className="h-4 w-4" />
+              <span className="text-[10px] font-medium">Menu</span>
+            </button>
           </div>
+          {/* Save indicator — thin line at top of nav */}
+          {pathname === "/builder" && (saving || !hasChanges) && (
+            <div className={`absolute top-0 left-0 right-0 h-0.5 ${
+              saving ? "bg-amber-400" : "bg-green-400"
+            }`} />
+          )}
         </nav>
       </div>
     </ProfileContext.Provider>

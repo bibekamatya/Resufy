@@ -106,7 +106,7 @@ const BuilderForm = ({
       </div>
 
       {/* Tab Content */}
-      <div className="flex-1 overflow-y-scroll overscroll-contain p-4 sm:p-6 bg-gray-50">
+      <div className="flex-1 overflow-y-scroll overscroll-contain p-4 sm:p-6 bg-gray-50 pb-16 lg:pb-6">
 
         {/* Personal */}
         {activeTab === "personal" && (
