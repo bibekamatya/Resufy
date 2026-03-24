@@ -1,9 +1,24 @@
 import { ResumeData } from "@/lib/types";
 
 const commonATSKeywords = [
-  "leadership", "management", "team", "project", "agile", "scrum",
-  "communication", "problem solving", "analytical", "strategic",
-  "collaboration", "innovation", "results-driven", "customer-focused",
+  // Soft skills
+  "leadership", "management", "communication", "collaboration", "problem solving",
+  "analytical", "strategic", "innovation", "results-driven", "customer-focused",
+  "teamwork", "mentoring", "cross-functional", "stakeholder",
+  // Methodologies
+  "agile", "scrum", "kanban", "ci/cd", "devops", "tdd", "rest api",
+  // Frontend
+  "react", "next.js", "typescript", "javascript", "html", "css", "tailwind",
+  "vue", "angular", "redux", "graphql",
+  // Backend
+  "node.js", "python", "java", "go", "rust", "php", "ruby",
+  "express", "fastapi", "django", "spring", "microservices",
+  // Databases
+  "postgresql", "mongodb", "mysql", "redis", "elasticsearch",
+  // Cloud & DevOps
+  "aws", "azure", "gcp", "docker", "kubernetes", "terraform", "linux",
+  // Data
+  "machine learning", "data analysis", "sql", "pandas", "tensorflow",
 ];
 
 export const calculateATSScore = (resumeData: ResumeData): {

@@ -7,18 +7,19 @@ import { sampleResumeData, emptyResumeData } from "@/lib/data";
 import { FileText, Target, Edit3, Eye, Download, ZoomIn, ZoomOut, ChevronDown, LogOut, Check, Loader2, Menu } from "lucide-react";
 import { MobileBottomSheet } from "@/components/ui/MobileBottomSheet";
 import Link from "next/link";
-import { getResumes, saveResume, createResume, deleteResume, duplicateResume, renameResume, shareResume } from "@/lib/actions/resume";
+import { getResumes, saveResume, createResume, deleteResume, duplicateResume, renameResume, shareResume, unshareResume } from "@/lib/actions/resume";
 import toast from "react-hot-toast";
 
 import { validateResumeData } from "@/lib/utils/validation";
 import { ProfileSelector } from "@/components/ui/ProfileSelector";
 import { ATSScore } from "@/components/ui/ATSScore";
+import { SidebarSkeleton, BuilderSkeleton, PreviewSkeleton } from "@/components/ui/Skeletons";
 
 interface ProfileContextType {
   profiles: ResumeProfile[];
   currentProfileId: string;
   resumeData: ResumeData;
-  setResumeData: React.Dispatch<React.SetStateAction<ResumeData>>;
+  setResumeData: React.Dispatch<React.SetStateAction<ResumeData | null>>;
   hasChanges: boolean;
   setHasChanges: (value: boolean) => void;
   saving: boolean;
@@ -33,6 +34,7 @@ interface ProfileContextType {
   zoom: number;
   zoomIn: () => void;
   zoomOut: () => void;
+  initialized: boolean;
 }
 
 const ProfileContext = createContext<ProfileContextType | null>(null);
@@ -67,7 +69,7 @@ function UserFooter({ user }: { user: any }) {
   );
 }
 export function DashboardProvider({ children, user }: { children: ReactNode; user: any }) {
-  const [resumeData, setResumeData] = useState<ResumeData>(sampleResumeData);
+  const [resumeData, setResumeData] = useState<ResumeData | null>(null);
   const [profiles, setProfiles] = useState<ResumeProfile[]>([]);
   const [currentProfileId, setCurrentProfileId] = useState<string>("default");
   const [hasChanges, setHasChanges] = useState(false);
@@ -94,7 +96,7 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
     setExportOpen(false);
     const { exportToWord } = await import('@/lib/utils/exportWord');
     const currentProfile = profiles.find(p => p._id === currentProfileId);
-    await exportToWord(resumeData, currentProfile?.title || 'resume');
+    await exportToWord(resumeData ?? sampleResumeData, currentProfile?.title || 'resume');
     toast.success('Word document exported!');
   };
 
@@ -110,13 +112,14 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
       const { PDFAcademic } = await import('@/components/templates/PDFAcademic');
       const { PDFBalanced } = await import('@/components/templates/PDFBalanced');
       const currentProfile = profiles.find(p => p._id === currentProfileId);
+      const data = resumeData ?? sampleResumeData;
       const pdfTemplates: Record<string, React.ReactElement> = {
-        classic: <PDFClassic data={resumeData} />,
-        modern: <PDFModern data={resumeData} />,
-        compact: <PDFCompact data={resumeData} />,
-        creative: <PDFCreative data={resumeData} />,
-        academic: <PDFAcademic data={resumeData} />,
-        balanced: <PDFBalanced data={resumeData} />,
+        classic: <PDFClassic data={data} />,
+        modern: <PDFModern data={data} />,
+        compact: <PDFCompact data={data} />,
+        creative: <PDFCreative data={data} />,
+        academic: <PDFAcademic data={data} />,
+        balanced: <PDFBalanced data={data} />,
       };
       const blob = await pdf(pdfTemplates[currentTemplate] as any || pdfTemplates.classic).toBlob();
       const url = URL.createObjectURL(blob);
@@ -163,34 +166,33 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
     }
   }, [user, initialized]);
 
-  const handleSaveResume = async () => {
-    if (!user || !currentProfileId) return;
+  const handleSaveResume = async (silent = false) => {
+    if (!user || !currentProfileId || !resumeData) return;
 
-    const { isValid, errors } = validateResumeData(resumeData);
-    if (!isValid) {
-      const firstError = Object.values(errors)[0][0];
-      toast.error(firstError);
-      return;
+    if (!silent) {
+      const { isValid, errors } = validateResumeData(resumeData);
+      if (!isValid) {
+        const firstError = Object.values(errors)[0][0];
+        toast.error(firstError);
+        return;
+      }
     }
 
     setSaving(true);
-    
     try {
       const result = await saveResume(currentProfileId, resumeData, currentTemplate);
       if (result.success) {
         setHasChanges(false);
-        // Update the profile in state if it was created
         if (currentProfileId === 'default' && result.resume) {
           setCurrentProfileId(result.resume._id);
           setProfiles([result.resume]);
         }
-      } else {
+      } else if (!silent) {
         toast.error(result.error || 'Failed to save resume');
       }
     } catch (error) {
-      toast.error('Failed to save resume');
+      if (!silent) toast.error('Failed to save resume');
     }
-    
     setSaving(false);
   };
 
@@ -199,7 +201,7 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
     if (!hasChanges || !initialized) return;
     if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
     autoSaveTimer.current = setTimeout(() => {
-      handleSaveResume();
+      handleSaveResume(true); // silent auto-save, skip validation
     }, 3000);
     return () => {
       if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
@@ -274,20 +276,36 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
   };
 
   const handleShareProfile = async (profileId: string) => {
+    const profile = profiles.find(p => p._id === profileId);
+    if (profile?.isPublic) {
+      // Revoke share
+      try {
+        const result = await unshareResume(profileId);
+        if (result.success) {
+          setProfiles(profiles.map(p => p._id === profileId ? { ...p, isPublic: false, shareId: undefined } : p));
+          toast.success('Share link revoked!');
+        } else {
+          toast.error(result.error || 'Failed to revoke share link');
+        }
+      } catch {
+        toast.error('Failed to revoke share link');
+      }
+      return;
+    }
     try {
       const result = await shareResume(profileId);
       if (result.success) {
-        // Copy to clipboard
         if (!result.shareUrl) {
           toast.error(result.error || 'Failed to generate share link');
           return;
         }
+        setProfiles(profiles.map(p => p._id === profileId ? { ...p, isPublic: true } : p));
         await navigator.clipboard.writeText(result.shareUrl);
         toast.success('Share link copied to clipboard!');
       } else {
         toast.error(result.error || 'Failed to share profile');
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to share profile');
     }
   };
@@ -311,7 +329,7 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
       value={{
         profiles,
         currentProfileId,
-        resumeData,
+        resumeData: resumeData ?? sampleResumeData,
         setResumeData,
         hasChanges,
         setHasChanges,
@@ -327,6 +345,7 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
         zoom,
         zoomIn,
         zoomOut,
+        initialized,
       }}
     >
       <div className="flex flex-col lg:flex-row h-screen overflow-hidden">
@@ -346,17 +365,23 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
           </div>
           {/* Sidebar content scrolls */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            <ProfileSelector
-              profiles={profiles}
-              currentProfileId={currentProfileId}
-              onSelectProfile={selectProfile}
-              onCreateProfile={handleCreateProfile}
-              onDeleteProfile={handleDeleteProfile}
-              onRenameProfile={handleRenameProfile}
-              onDuplicateProfile={handleDuplicateProfile}
-              onShareProfile={handleShareProfile}
-            />
-            <ATSScore resumeData={resumeData} />
+            {!initialized ? (
+              <SidebarSkeleton />
+            ) : (
+              <>
+                <ProfileSelector
+                  profiles={profiles}
+                  currentProfileId={currentProfileId}
+                  onSelectProfile={selectProfile}
+                  onCreateProfile={handleCreateProfile}
+                  onDeleteProfile={handleDeleteProfile}
+                  onRenameProfile={handleRenameProfile}
+                  onDuplicateProfile={handleDuplicateProfile}
+                  onShareProfile={handleShareProfile}
+                />
+                <ATSScore resumeData={resumeData ?? sampleResumeData} />
+              </>
+            )}
           </div>
           {/* User info footer */}
           <div className="p-3 border-t border-gray-100 shrink-0">
@@ -433,7 +458,11 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
           </div>
 
           {/* Page Content — only this scrolls */}
-          <div className="flex-1 min-h-0">{children}</div>
+          <div className="flex-1 min-h-0 relative">
+            {!initialized ? (
+              pathname === "/resume" ? <PreviewSkeleton /> : <BuilderSkeleton />
+            ) : children}
+          </div>
         </div>
 
         <MobileBottomSheet isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
@@ -447,17 +476,23 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
                 <div className="text-[10px] text-gray-400 leading-tight">Resume Builder</div>
               </div>
             </Link>
-            <ProfileSelector
-              profiles={profiles}
-              currentProfileId={currentProfileId}
-              onSelectProfile={(id) => { selectProfile(id); setSidebarOpen(false); }}
-              onCreateProfile={handleCreateProfile}
-              onDeleteProfile={handleDeleteProfile}
-              onRenameProfile={handleRenameProfile}
-              onDuplicateProfile={handleDuplicateProfile}
-              onShareProfile={handleShareProfile}
-            />
-            <ATSScore resumeData={resumeData} />
+            {!initialized ? (
+              <SidebarSkeleton />
+            ) : (
+              <>
+                <ProfileSelector
+                  profiles={profiles}
+                  currentProfileId={currentProfileId}
+                  onSelectProfile={(id) => { selectProfile(id); setSidebarOpen(false); }}
+                  onCreateProfile={handleCreateProfile}
+                  onDeleteProfile={handleDeleteProfile}
+                  onRenameProfile={handleRenameProfile}
+                  onDuplicateProfile={handleDuplicateProfile}
+                  onShareProfile={handleShareProfile}
+                />
+                <ATSScore resumeData={resumeData ?? sampleResumeData} />
+              </>
+            )}
             <div className="pt-2 border-t border-gray-100">
               <UserFooter user={user} />
             </div>

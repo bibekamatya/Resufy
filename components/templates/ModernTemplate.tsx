@@ -12,6 +12,7 @@ export const ModernTemplate = ({ data }: ModernTemplateProps) => {
   const visibleSkills = skills.filter(skill => skillsVisibility?.[skill] ?? true);
   const visibleCertifications = (certifications || []).filter(cert => cert.visible !== false);
   const visibleLanguages = (languages || []).filter(lang => lang.visible !== false);
+  const visibleEducation = education.filter(edu => edu.visible !== false);
 
   return (
     <div className="bg-white text-gray-900 w-full h-full p-8 print:p-4">
@@ -141,13 +142,13 @@ export const ModernTemplate = ({ data }: ModernTemplateProps) => {
         {/* Right Column (1/3 width) */}
         <div className="space-y-6 print:space-y-3">
           {/* Education */}
-          {education.length > 0 && (
+          {visibleEducation.length > 0 && (
             <div>
               <h2 className="text-lg font-bold text-gray-900 mb-3 border-b pb-2">
                 EDUCATION
               </h2>
               <div className="space-y-3">
-                {education.map((edu) => (
+                {visibleEducation.map((edu) => (
                   <div key={edu.id} className="pb-3 border-b border-gray-100">
                     <h3 className="font-bold text-gray-900 text-sm">
                       {edu.degree}

@@ -1,4 +1,4 @@
-import { ResumeData, PersonalInfo, Experience, Education, Project, Certification, Language } from "@/lib/types";
+import { ResumeData, PersonalInfo, Experience, Education, Project, Certification, Language, SectionKey } from "@/lib/types";
 
 export const createResumeUpdaters = (
   setResumeData: (updater: ResumeData | ((prev: ResumeData) => ResumeData)) => void
@@ -210,6 +210,10 @@ export const createResumeUpdaters = (
     }));
   };
 
+  const reorderSections = (order: SectionKey[]) => {
+    setResumeData((prev) => ({ ...prev, sectionOrder: order }));
+  };
+
   return {
     updatePersonalInfo,
     addExperience,
@@ -230,5 +234,6 @@ export const createResumeUpdaters = (
     addLanguage,
     updateLanguage,
     deleteLanguage,
+    reorderSections,
   };
 };

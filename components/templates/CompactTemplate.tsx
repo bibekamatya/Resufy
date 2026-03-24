@@ -12,6 +12,7 @@ export const CompactTemplate = ({ data }: CompactTemplateProps) => {
   const visibleSkills = skills.filter(skill => skillsVisibility?.[skill] ?? true);
   const visibleCertifications = (certifications || []).filter(cert => cert.visible !== false);
   const visibleLanguages = (languages || []).filter(lang => lang.visible !== false);
+  const visibleEducation = education.filter(edu => edu.visible !== false);
 
   return (
     <div className="bg-white text-gray-900 w-full h-full p-6 text-sm">
@@ -78,12 +79,12 @@ export const CompactTemplate = ({ data }: CompactTemplateProps) => {
         )}
 
         {/* Education */}
-        {education.length > 0 && (
+        {visibleEducation.length > 0 && (
           <div>
             <h2 className="text-base font-bold text-gray-900 mb-2 border-b border-gray-300 pb-1">
               EDUCATION
             </h2>
-            {education.map((edu) => (
+            {visibleEducation.map((edu) => (
               <div key={edu.id} className="mb-3 last:mb-0">
                 <div className="flex justify-between">
                   <span className="font-bold">{edu.institution}</span>

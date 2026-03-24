@@ -2,8 +2,19 @@
 
 import { useState } from "react";
 import { ResumeProfile } from "@/lib/types";
-import { Plus, Check, Trash2, Edit2, Copy, Share2, MoreVertical } from "lucide-react";
+import { Plus, Check, Trash2, Edit2, Copy, Share2, MoreVertical, Link2 } from "lucide-react";
 import { Dialog } from "./Dialog";
+
+function timeAgo(dateStr: string) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  return `${days}d ago`;
+}
 
 interface ProfileSelectorProps {
   profiles: ResumeProfile[];
@@ -76,20 +87,25 @@ export const ProfileSelector = ({
               <div className="flex items-center gap-1 group">
                 <button
                   onClick={() => onSelectProfile(profile._id)}
-                  className={`flex-1 text-left px-3 py-2 rounded text-sm flex items-center gap-2 ${
+                  className={`flex-1 text-left px-3 py-2 rounded text-sm flex flex-col ${
                     currentProfileId === profile._id
                       ? "bg-blue-50 text-blue-700 font-medium"
                       : "hover:bg-gray-50 text-gray-700"
                   }`}
                 >
-                  <span className="flex-1 truncate">{profile.title}</span>
-                  {currentProfileId === profile._id && <Check className="h-4 w-4" />}
+                  <div className="flex items-center gap-2">
+                    <span className="flex-1 truncate">{profile.title}</span>
+                    {currentProfileId === profile._id && <Check className="h-4 w-4 shrink-0" />}
+                  </div>
+                  <span className="text-[10px] text-gray-400 font-normal">
+                    {timeAgo(profile.updatedAt)}
+                  </span>
                 </button>
                 
                 <div className="relative">
                   <button
                     onClick={() => setOpenMenuId(openMenuId === profile._id ? null : profile._id)}
-                    className="p-1.5 opacity-0 group-hover:opacity-100 hover:bg-gray-100 rounded transition-opacity"
+                    className="p-1.5 hover:bg-gray-100 rounded transition-colors"
                   >
                     <MoreVertical className="h-4 w-4 text-gray-500" />
                   </button>
@@ -129,8 +145,8 @@ export const ProfileSelector = ({
                             }}
                             className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           >
-                            <Share2 className="h-3.5 w-3.5" />
-                            Share
+                            {profile.isPublic ? <Link2 className="h-3.5 w-3.5" /> : <Share2 className="h-3.5 w-3.5" />}
+                            {profile.isPublic ? 'Revoke Link' : 'Share'}
                           </button>
                         )}
                         {profiles.length > 1 && (

@@ -24,12 +24,14 @@ const RESUME_WIDTH = 794;
 export default function ResumePage() {
   const { resumeData, currentTemplate, setCurrentTemplate, zoom } = useProfile();
   const containerRef = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
   const [mobileScale, setMobileScale] = useState(1);
+  const [previewHeight, setPreviewHeight] = useState(RESUME_WIDTH * 1.414);
 
   useEffect(() => {
     const update = () => {
       if (containerRef.current && window.innerWidth < 1024) {
-        const available = containerRef.current.clientWidth - 32; // 16px padding each side
+        const available = containerRef.current.clientWidth - 32;
         setMobileScale(available / RESUME_WIDTH);
       }
     };
@@ -37,6 +39,17 @@ export default function ResumePage() {
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
+
+  // Measure actual rendered height after template renders
+  useEffect(() => {
+    if (previewRef.current) {
+      const ro = new ResizeObserver(([entry]) => {
+        setPreviewHeight(entry.contentRect.height);
+      });
+      ro.observe(previewRef.current);
+      return () => ro.disconnect();
+    }
+  }, [currentTemplate, resumeData]);
 
   const renderTemplate = () => {
     const templateComponents: Record<string, React.ReactElement> = {
@@ -72,10 +85,11 @@ export default function ResumePage() {
       {/* Preview area */}
       <div ref={containerRef} className="flex-1 overflow-auto p-4 pb-32 lg:p-6 lg:pb-10" style={{ WebkitOverflowScrolling: "touch" }}>
         {/* Mobile: scale to fit width, no x-scroll */}
-        <div className="lg:hidden" style={{ height: `${RESUME_WIDTH * 1.414 * mobileScale}px` }}>
+        <div className="lg:hidden" style={{ height: `${previewHeight * mobileScale + 80}px` }}>
           <div
+            ref={previewRef}
             id="resume-preview"
-            className="bg-white shadow-xl origin-top-left"
+            className="bg-white shadow-xl origin-top-left pb-32 md:pb-0"
             style={{ width: RESUME_WIDTH, transform: `scale(${mobileScale}) translateZ(0)`, willChange: "transform" }}
           >
             {renderTemplate()}
@@ -87,6 +101,7 @@ export default function ResumePage() {
           <div className="mx-auto pb-10" style={{ width: `${RESUME_WIDTH * zoom / 100}px` }}>
             <div
               id="resume-preview"
+              ref={previewRef}
               className="bg-white shadow-2xl origin-top-left"
               style={{ width: RESUME_WIDTH, transform: `scale(${zoom / 100})` }}
             >

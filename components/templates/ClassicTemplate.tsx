@@ -12,6 +12,7 @@ export const ClassicTemplate = ({ data }: ClassicTemplateProps) => {
   const visibleSkills = skills.filter(skill => (skillsVisibility?.[skill] ?? true));
   const visibleCertifications = (certifications || []).filter(cert => cert.visible !== false);
   const visibleLanguages = (languages || []).filter(lang => lang.visible !== false);
+  const visibleEducation = education.filter(edu => edu.visible !== false);
 
   return (
     <div className="bg-white text-gray-900 w-full h-full p-8">
@@ -85,13 +86,13 @@ export const ClassicTemplate = ({ data }: ClassicTemplateProps) => {
       )}
 
       {/* Education */}
-      {education.length > 0 && (
+      {visibleEducation.length > 0 && (
         <div className="mb-6">
           <h2 className="text-lg font-bold text-gray-900 mb-3 uppercase tracking-wide">
             Education
           </h2>
           <div className="space-y-3">
-            {education.map((edu) => (
+            {visibleEducation.map((edu) => (
               <div key={edu.id} className="flex justify-between items-start">
                 <div>
                   <h3 className="font-bold text-gray-900">

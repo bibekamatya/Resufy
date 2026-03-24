@@ -12,6 +12,7 @@ export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
   const visibleSkills = skills.filter(skill => (skillsVisibility?.[skill] ?? true));
   const visibleCertifications = (certifications || []).filter(cert => cert.visible !== false);
   const visibleLanguages = (languages || []).filter(lang => lang.visible !== false);
+  const visibleEducation = education.filter(edu => edu.visible !== false);
 
   return (
     <div className="bg-white text-gray-900 w-full h-full p-10">
@@ -56,13 +57,13 @@ export const AcademicTemplate = ({ data }: AcademicTemplateProps) => {
         )}
 
         {/* Education (Highlighted for Academic CV) */}
-        {education.length > 0 && (
+        {visibleEducation.length > 0 && (
           <div>
             <h2 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">
               EDUCATION
             </h2>
             <div className="space-y-4">
-              {education.map((edu) => (
+              {visibleEducation.map((edu) => (
                 <div key={edu.id} className="pb-4 border-b border-gray-100">
                   <div className="flex justify-between items-start mb-1">
                     <div>

@@ -154,10 +154,9 @@ export async function shareResume(resumeId: string) {
     }
 
     await connectDB()
-    
-    // Generate unique share ID
-    const shareId = Math.random().toString(36).substring(2, 15)
-    
+
+    const shareId = crypto.randomUUID()
+
     const resume = await Resume.findOneAndUpdate(
       { _id: resumeId, userId: session.user.id },
       { isPublic: true, shareId },
@@ -169,8 +168,27 @@ export async function shareResume(resumeId: string) {
     }
 
     const shareUrl = `${process.env.NEXTAUTH_URL}/share/${shareId}`
-    
+
     return { success: true, shareUrl }
+  } catch (error: any) {
+    return { success: false, error: error.message }
+  }
+}
+
+export async function unshareResume(resumeId: string) {
+  try {
+    const session = await auth()
+    if (!session?.user) {
+      throw new Error('Unauthorized')
+    }
+
+    await connectDB()
+    await Resume.findOneAndUpdate(
+      { _id: resumeId, userId: session.user.id },
+      { isPublic: false, shareId: null },
+    )
+
+    return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }
   }

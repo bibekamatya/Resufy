@@ -29,6 +29,7 @@ export interface Education {
   startDate: string;
   endDate: string;
   gpa?: string;
+  visible?: boolean;
 }
 
 export interface Project {
@@ -57,6 +58,12 @@ export interface Language {
   visible?: boolean;
 }
 
+export type SectionKey = "experience" | "education" | "projects" | "skills" | "certifications" | "languages";
+
+export const DEFAULT_SECTION_ORDER: SectionKey[] = [
+  "experience", "education", "projects", "skills", "certifications", "languages"
+];
+
 export interface ResumeData {
   personalInfo: PersonalInfo;
   experience: Experience[];
@@ -66,6 +73,7 @@ export interface ResumeData {
   certifications?: Certification[];
   languages?: Language[];
   skillsVisibility?: Record<string, boolean>;
+  sectionOrder?: SectionKey[];
 }
 
 export interface ResumeProfile {

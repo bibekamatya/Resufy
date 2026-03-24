@@ -12,6 +12,7 @@ export const CreativeTemplate = ({ data }: CreativeTemplateProps) => {
   const visibleSkills = skills.filter(skill => (skillsVisibility?.[skill] ?? true));
   const visibleCertifications = (certifications || []).filter(cert => cert.visible !== false);
   const visibleLanguages = (languages || []).filter(lang => lang.visible !== false);
+  const visibleEducation = education.filter(edu => edu.visible !== false);
 
   return (
     <div className="bg-white text-gray-900 w-full flex" style={{ background: "linear-gradient(to right, #1d4ed8 25%, white 25%)" }}>
@@ -136,14 +137,14 @@ export const CreativeTemplate = ({ data }: CreativeTemplateProps) => {
           </div>
         )}
 
-        {education.length > 0 && (
+        {visibleEducation.length > 0 && (
           <div className="mb-6">
             <div className="flex items-center mb-3">
               <div className="w-8 h-1 bg-blue-600 mr-3"></div>
               <h2 className="text-lg font-bold text-gray-900">EDUCATION</h2>
             </div>
             <div className="space-y-3">
-              {education.map((edu) => (
+              {visibleEducation.map((edu) => (
                 <div key={edu.id}>
                   <h3 className="font-bold text-gray-900 text-sm">{edu.degree} in {edu.field}</h3>
                   <p className="text-sm text-gray-700">{edu.institution}</p>

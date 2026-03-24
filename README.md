@@ -1,39 +1,42 @@
 # 📄 Resufy
 
-A modern, dynamic resume builder with live preview and PDF export. Create professional resumes with multiple templates.
+A modern resume builder with live preview, multiple templates, and PDF/Word export.
 
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat-square&logo=tailwind-css)
+![MongoDB](https://img.shields.io/badge/MongoDB-green?style=flat-square&logo=mongodb)
 
 ## ✨ Features
 
-- 🔐 **Authentication** - Secure login with Supabase
+- 🔐 **Authentication** - Secure login with NextAuth.js
 - 📁 **Multiple Profiles** - Create, rename, delete, and duplicate resume profiles
 - 📝 **Dynamic Form Editor** - Add, edit, and remove sections in real-time
 - 👁️ **Visibility Controls** - Toggle visibility for individual entries
 - 🎨 **6 Templates** - Classic, Modern, Compact, Creative, Academic, Balanced
 - 📄 **PDF Export** - Clean PDF downloads with react-pdf
+- 📝 **Word Export** - Export resumes as .docx files
 - 🎯 **ATS Scoring** - Real-time ATS optimization with keyword suggestions
-- 🔗 **Share Resumes** - Generate public links for feedback
-- 🌙 **Dark Mode** - Light mode only
+- 🔗 **Share Resumes** - Generate public links for sharing
 - 💡 **Skills Autocomplete** - Smart suggestions from common skills
-- 📱 **Responsive** - Works on desktop and mobile devices
+- 📱 **Responsive** - Works on desktop and mobile
 
 ## 🛠️ Tech Stack
 
 - **Next.js 15** - React framework with App Router
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first styling
-- **Supabase** - Authentication and database
+- **NextAuth.js** - Authentication
+- **MongoDB** - Database for resume storage
 - **react-pdf** - PDF generation
 - **Lucide Icons** - Icon library
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ installed
-- Supabase account
+- Node.js 18+
+- MongoDB database (local or [MongoDB Atlas](https://www.mongodb.com/atlas))
+- Google OAuth credentials ([Google Cloud Console](https://console.cloud.google.com/))
 
 ### Installation
 
@@ -49,10 +52,14 @@ npm install
 ```
 
 3. **Set up environment variables**
-Create `.env.local` with your Supabase credentials:
+
+Create `.env.local` in the root:
 ```bash
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+MONGODB_URI=your_mongodb_connection_string
+NEXTAUTH_SECRET=your_nextauth_secret
+NEXTAUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
 4. **Run the development server**
@@ -61,6 +68,7 @@ npm run dev
 ```
 
 5. **Open your browser**
+
 Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 📁 Project Structure
@@ -78,26 +86,14 @@ resufy/
 │   ├── templates/         # HTML & PDF templates
 │   └── ui/                # UI components
 ├── lib/
+│   ├── actions/           # Server actions
 │   ├── utils/             # Utilities
 │   ├── data/              # Static data
 │   └── types.ts           # TypeScript types
-└── middleware.ts          # Auth middleware
+└── middleware.ts           # Auth middleware
 ```
 
-## 🎯 Roadmap
-
-- [x] Authentication with Supabase
-- [x] Multiple resume profiles
-- [x] Form editor with all sections
-- [x] Visibility toggles
-- [x] 6 resume templates
-- [x] PDF export with react-pdf
-- [x] ATS scoring system
-- [x] Share functionality
-- [x] Dark mode
-- [x] Skills autocomplete
-
-## 👨💻 Author
+## 👨‍💻 Author
 
 **Bibek Amatya**
 - GitHub: [@bibekamatya](https://github.com/bibekamatya)

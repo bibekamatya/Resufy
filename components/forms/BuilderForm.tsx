@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Input, Textarea } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { Card, CardHeader } from "../ui/Card";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, GripVertical } from "lucide-react";
 import { commonSkills } from "@/lib/data/commonSkills";
 import {
-  ResumeData, PersonalInfo, Experience, Education, Project, Certification, Language,
+  ResumeData, PersonalInfo, Experience, Education, Project, Certification, Language, SectionKey, DEFAULT_SECTION_ORDER
 } from "@/lib/types";
 
 interface BuilderFormProps {
@@ -30,16 +30,21 @@ interface BuilderFormProps {
   addLanguage: () => void;
   updateLanguage: (id: string, field: keyof Language, value: any) => void;
   deleteLanguage: (id: string) => void;
+  reorderSections: (order: SectionKey[]) => void;
 }
 
-const TABS = [
-  { id: "personal", label: "Personal" },
+const SECTION_TABS: { id: SectionKey; label: string }[] = [
   { id: "experience", label: "Experience" },
   { id: "education", label: "Education" },
   { id: "projects", label: "Projects" },
   { id: "skills", label: "Skills" },
   { id: "certifications", label: "Certifications" },
   { id: "languages", label: "Languages" },
+];
+
+const TABS = [
+  { id: "personal", label: "Personal" },
+  ...SECTION_TABS,
 ];
 
 const getTabCount = (id: string, resumeData: ResumeData): number | boolean => {
@@ -64,10 +69,60 @@ const BuilderForm = ({
   addSkill, deleteSkill, toggleSkillVisibility,
   addCertification, updateCertification, deleteCertification,
   addLanguage, updateLanguage, deleteLanguage,
+  reorderSections,
 }: BuilderFormProps) => {
   const [activeTab, setActiveTab] = useState("personal");
   const [skillInput, setSkillInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const sectionOrder: SectionKey[] = resumeData.sectionOrder ?? DEFAULT_SECTION_ORDER;
+  const [localOrder, setLocalOrder] = useState<SectionKey[]>(sectionOrder);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const dragItem = useRef<string | null>(null);
+
+  // Sync localOrder when sectionOrder changes externally
+  React.useEffect(() => {
+    setLocalOrder(resumeData.sectionOrder ?? DEFAULT_SECTION_ORDER);
+  }, [resumeData.sectionOrder]);
+
+  const orderedTabs = [
+    { id: "personal", label: "Personal" },
+    ...localOrder.map(id => SECTION_TABS.find(t => t.id === id)!).filter(Boolean),
+  ];
+
+  const handleDragStart = (id: string) => {
+    dragItem.current = id;
+    setDraggingId(id);
+  };
+
+  const handleDragOver = (e: React.DragEvent, id: string) => {
+    e.preventDefault();
+    if (!dragItem.current || dragItem.current === id || id === "personal") return;
+    const from = dragItem.current as SectionKey;
+    const to = id as SectionKey;
+    const newOrder = [...localOrder];
+    const fromIdx = newOrder.indexOf(from);
+    const toIdx = newOrder.indexOf(to);
+    if (fromIdx === -1 || toIdx === -1) return;
+    newOrder.splice(fromIdx, 1);
+    newOrder.splice(toIdx, 0, from);
+    setLocalOrder(newOrder);
+    setDragOverId(id);
+  };
+
+  const handleDrop = () => {
+    reorderSections(localOrder);
+    setDraggingId(null);
+    setDragOverId(null);
+    dragItem.current = null;
+  };
+
+  const handleDragEnd = () => {
+    setDraggingId(null);
+    setDragOverId(null);
+    dragItem.current = null;
+  };
 
   const filteredSkills = commonSkills.filter(
     (skill) => skillInput && skill.toLowerCase().includes(skillInput.toLowerCase()) && !resumeData.skills.includes(skill)
@@ -79,28 +134,47 @@ const BuilderForm = ({
     <div className="flex flex-col h-full min-h-0">
       {/* Tab Bar */}
       <div className="flex overflow-x-auto border-b border-gray-200 bg-white shrink-0 scrollbar-hide">
-        {TABS.map((tab) => {
+        {orderedTabs.map((tab) => {
           const count = getTabCount(tab.id, resumeData);
           const hasData = typeof count === "boolean" ? count : count > 0;
+          const isSection = tab.id !== "personal";
+          const isDragging = draggingId === tab.id;
+          const isOver = dragOverId === tab.id;
           return (
-            <button
+            <div
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`shrink-0 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex items-center gap-1.5 ${
-                activeTab === tab.id
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-800"
+              draggable={isSection}
+              onDragStart={() => isSection && handleDragStart(tab.id)}
+              onDragOver={(e) => isSection && handleDragOver(e, tab.id)}
+              onDrop={handleDrop}
+              onDragEnd={handleDragEnd}
+              className={`shrink-0 flex items-center border-b-2 select-none transition-all duration-200 ${
+                isDragging ? "opacity-40 scale-95" : "opacity-100 scale-100"
+              } ${
+                isOver && !isDragging ? "bg-blue-50 border-b-blue-300" : activeTab === tab.id ? "border-blue-600" : "border-transparent"
               }`}
             >
-              {tab.label}
-              {typeof count === "number" && count > 0 ? (
-                <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
-                  activeTab === tab.id ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
-                }`}>{count}</span>
-              ) : typeof count === "boolean" && hasData ? (
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-              ) : null}
-            </button>
+              {isSection && (
+                <span className="pl-2 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 transition-colors">
+                  <GripVertical className="h-3.5 w-3.5" />
+                </span>
+              )}
+              <button
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-3 py-3 text-sm font-medium whitespace-nowrap flex items-center gap-1.5 transition-colors ${
+                  activeTab === tab.id ? "text-blue-600" : "text-gray-500 hover:text-gray-800"
+                }`}
+              >
+                {tab.label}
+                {typeof count === "number" && count > 0 ? (
+                  <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
+                    activeTab === tab.id ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
+                  }`}>{count}</span>
+                ) : typeof count === "boolean" && hasData ? (
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                ) : null}
+              </button>
+            </div>
           );
         })}
       </div>
@@ -169,7 +243,12 @@ const BuilderForm = ({
             {resumeData.education.map((edu) => (
               <Card key={edu.id} hover>
                 <CardHeader
-                  title={edu.institution || "New Education"}
+                  title={
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" checked={edu.visible ?? true} onChange={(e) => updateEducation(edu.id, "visible", e.target.checked as any)} className="rounded bg-white border-gray-300 text-blue-600 focus:ring-blue-500" />
+                      <span>{edu.institution || "New Education"}</span>
+                    </div>
+                  }
                   action={<Button onClick={() => deleteEducation(edu.id)} variant="ghost" size="sm" icon={Trash2} className="text-red-600 hover:bg-red-50">Delete</Button>}
                 />
                 <div className="space-y-3">

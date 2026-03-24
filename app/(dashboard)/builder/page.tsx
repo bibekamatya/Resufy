@@ -29,8 +29,12 @@ export default function BuilderPage() {
     addLanguage,
     updateLanguage,
     deleteLanguage,
+    reorderSections,
   } = createResumeUpdaters((updater) => {
-    setResumeData(updater);
+    setResumeData((prev) => {
+      const base = prev ?? resumeData;
+      return typeof updater === "function" ? updater(base) : updater;
+    });
     setHasChanges(true);
   });
 
@@ -65,6 +69,7 @@ export default function BuilderPage() {
           addLanguage={addLanguage}
           updateLanguage={updateLanguage}
           deleteLanguage={deleteLanguage}
+          reorderSections={reorderSections}
         />
     </div>
   );
