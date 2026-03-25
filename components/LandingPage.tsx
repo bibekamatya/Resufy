@@ -45,8 +45,58 @@ export function LandingPage() {
     );
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Resufy",
+    url: "https://resufy.vercel.app",
+    description:
+      "Free online resume builder with ATS-friendly templates, live preview, PDF & Word export, and real-time ATS scoring.",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    featureList: [
+      "6 ATS-friendly resume templates",
+      "Live resume preview",
+      "PDF and Word export",
+      "Real-time ATS scoring",
+      "Multiple resume profiles",
+      "Shareable resume links",
+      "Skills autocomplete",
+    ],
+    author: {
+      "@type": "Person",
+      name: "Bibek Amatya",
+      url: "https://github.com/bibekamatya",
+    },
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "Is Resufy completely free?", acceptedAnswer: { "@type": "Answer", text: "Yes. Resufy is 100% free with no hidden fees, no watermarks, and no credit card required." } },
+      { "@type": "Question", name: "Are the resume templates ATS-friendly?", acceptedAnswer: { "@type": "Answer", text: "All 6 templates are designed to pass Applicant Tracking Systems (ATS) with clean formatting and proper heading structure." } },
+      { "@type": "Question", name: "Can I export my resume as a PDF?", acceptedAnswer: { "@type": "Answer", text: "Yes. You can export your resume as a PDF or Word (.docx) file instantly with no watermarks." } },
+      { "@type": "Question", name: "Can I create multiple resumes?", acceptedAnswer: { "@type": "Answer", text: "Yes. You can create, rename, duplicate, and manage multiple resume profiles for different job applications." } },
+      { "@type": "Question", name: "How does the ATS score work?", acceptedAnswer: { "@type": "Answer", text: "Resufy analyzes your resume in real time and scores it based on completeness, keyword density, and formatting best practices." } },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50 text-gray-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 opacity-70"></div>
@@ -306,6 +356,50 @@ export function LandingPage() {
                 <p className="text-xs text-gray-400">{desc}</p>
               </div>
             </button>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="mx-auto max-w-3xl px-4 py-20">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-4xl font-bold">Frequently Asked Questions</h2>
+          <p className="text-lg text-gray-600">Everything you need to know about Resufy</p>
+        </div>
+        <div className="space-y-4">
+          {[
+            {
+              q: "Is Resufy completely free?",
+              a: "Yes. Resufy is 100% free with no hidden fees, no watermarks, and no credit card required. All templates and export features are included at no cost.",
+            },
+            {
+              q: "Are the resume templates ATS-friendly?",
+              a: "All 6 templates are designed to pass Applicant Tracking Systems (ATS). They use clean formatting, standard fonts, and proper heading structure that ATS software can parse correctly.",
+            },
+            {
+              q: "Can I export my resume as a PDF?",
+              a: "Yes. You can export your resume as a PDF or Word (.docx) file instantly from the Preview page. No watermarks are added.",
+            },
+            {
+              q: "Can I create multiple resumes?",
+              a: "Yes. You can create, rename, duplicate, and manage multiple resume profiles — useful for tailoring your resume to different job applications.",
+            },
+            {
+              q: "How does the ATS score work?",
+              a: "Resufy analyzes your resume content in real time and scores it based on completeness, keyword density, and formatting best practices. It also suggests missing keywords to improve your score.",
+            },
+            {
+              q: "Can I share my resume online?",
+              a: "Yes. You can generate a public shareable link for any resume profile. The link shows a live preview of your resume that anyone can view without signing in.",
+            },
+          ].map(({ q, a }) => (
+            <details key={q} className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+              <summary className="flex cursor-pointer items-center justify-between font-semibold text-gray-900 list-none">
+                {q}
+                <span className="ml-4 shrink-0 text-gray-400 group-open:rotate-180 transition-transform">▾</span>
+              </summary>
+              <p className="mt-3 text-sm text-gray-600 leading-relaxed">{a}</p>
+            </details>
           ))}
         </div>
       </section>

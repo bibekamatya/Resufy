@@ -16,9 +16,79 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const BASE_URL = "https://resufy.vercel.app";
+
 export const metadata: Metadata = {
-  title: "Resufy - Professional Resume Builder",
-  description: "Create professional resumes with live preview and PDF export",
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: "Resufy – Free Resume Builder | ATS-Friendly Templates",
+    template: "%s | Resufy",
+  },
+  description:
+    "Build a professional resume in minutes with Resufy. Free resume builder with ATS-friendly templates, live preview, PDF & Word export, and real-time ATS scoring. No credit card required.",
+  keywords: [
+    "free resume builder",
+    "resume builder",
+    "ATS resume builder",
+    "professional resume templates",
+    "resume maker",
+    "online resume builder",
+    "resume creator",
+    "CV builder",
+    "ATS friendly resume",
+    "resume templates",
+    "PDF resume download",
+    "resume for job application",
+    "modern resume template",
+    "resume builder no sign up",
+    "best free resume builder 2025",
+  ],
+  authors: [{ name: "Bibek Amatya", url: "https://github.com/bibekamatya" }],
+  creator: "Bibek Amatya",
+  publisher: "Resufy",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
+  alternates: {
+    canonical: BASE_URL,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: BASE_URL,
+    siteName: "Resufy",
+    title: "Resufy – Free Resume Builder | ATS-Friendly Templates",
+    description:
+      "Create a professional, ATS-optimized resume in minutes. 6 templates, live preview, PDF & Word export. 100% free.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Resufy – Free Resume Builder",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Resufy – Free Resume Builder | ATS-Friendly Templates",
+    description:
+      "Create a professional, ATS-optimized resume in minutes. 6 templates, live preview, PDF & Word export. 100% free.",
+    images: ["/og-image.png"],
+    creator: "@bibekamatya",
+  },
+  verification: {
+    google: "H-hP6QjBrh2wJZ9C2HrKBdyAlXEWLHHDpPPgZKbYLJw",
+  },
+  category: "technology",
 };
 
 export default function RootLayout({
