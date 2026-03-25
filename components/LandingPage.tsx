@@ -217,8 +217,9 @@ export function LandingPage() {
         <div className="relative overflow-hidden rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 p-12 text-center shadow-2xl sm:p-16">
           <div className="absolute inset-0 bg-grid-pattern opacity-10" />
           <div className="relative">
-            <h2 className="mb-4 text-4xl font-bold text-white sm:text-5xl">
-              Build Your Resume Free — Land More Interviews
+            <h2 className="mb-4 font-bold text-white">
+              <span className="block text-2xl sm:hidden">Build Your Resume Free</span>
+              <span className="hidden sm:block text-4xl lg:text-5xl">Build Your Resume Free — Land More Interviews</span>
             </h2>
             <p className="mb-8 text-lg text-blue-100 sm:text-xl">
               ATS-optimized templates, live preview, and instant PDF export. No credit card needed.

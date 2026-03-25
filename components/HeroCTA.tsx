@@ -20,7 +20,13 @@ export function HeroCTA() {
     else if (user) router.push("/builder");
   };
 
-  if (showAuth && !user) return <AuthForm />;
+  if (showAuth && !user) return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={() => setShowAuth(false)}>
+      <div onClick={(e) => e.stopPropagation()}>
+        <AuthForm />
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -71,7 +77,13 @@ export function CtaSectionButton() {
     else router.push("/builder");
   };
 
-  if (showAuth && !user) return <AuthForm />;
+  if (showAuth && !user) return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={() => setShowAuth(false)}>
+      <div onClick={(e) => e.stopPropagation()}>
+        <AuthForm />
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">

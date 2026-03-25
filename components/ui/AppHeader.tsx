@@ -29,8 +29,6 @@ function AppHeaderActions({ user }: AppHeaderProps) {
     else setShowAuth(true);
   };
 
-  if (showAuth && !user) return <AuthForm />;
-
   const initial = user?.email?.charAt(0).toUpperCase() || "U";
 
   if (user) {
@@ -78,6 +76,14 @@ function AppHeaderActions({ user }: AppHeaderProps) {
 
   return (
     <>
+      {/* Auth modal overlay */}
+      {showAuth && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={() => setShowAuth(false)}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <AuthForm />
+          </div>
+        </div>
+      )}
       {pathname === "/" && (
         <nav className="hidden md:flex items-center gap-1">
           <Link href="#features" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">Features</Link>
