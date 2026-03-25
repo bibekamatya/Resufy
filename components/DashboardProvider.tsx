@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ResumeData, ResumeProfile } from "@/lib/types";
 import { sampleResumeData, emptyResumeData } from "@/lib/data";
 import { FileText, Target, Edit3, Eye, Download, ZoomIn, ZoomOut, ChevronDown, LogOut, Check, Loader2, Menu } from "lucide-react";
@@ -75,6 +75,7 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
   const [hasChanges, setHasChanges] = useState(false);
   const [saving, setSaving] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [currentTemplate, setCurrentTemplate] = useState("classic");
   const [initialized, setInitialized] = useState(false);
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -142,18 +143,19 @@ export function DashboardProvider({ children, user }: { children: ReactNode; use
       const loadResumes = async () => {
         try {
           const result = await getResumes();
+          const templateParam = searchParams.get('template');
           if (result.success && result.resumes?.length > 0) {
             setProfiles(result.resumes);
             setCurrentProfileId(result.resumes[0]._id);
             setResumeData(result.resumes[0].data);
-            setCurrentTemplate(result.resumes[0].template || 'classic');
+            setCurrentTemplate(templateParam || result.resumes[0].template || 'classic');
           } else {
-            // Create default resume if none exist
             const createResult = await createResume('My Resume', sampleResumeData);
             if (createResult.success) {
               setProfiles([createResult.resume]);
               setCurrentProfileId(createResult.resume._id);
               setResumeData(sampleResumeData);
+              if (templateParam) setCurrentTemplate(templateParam);
             }
           }
         } catch (error) {

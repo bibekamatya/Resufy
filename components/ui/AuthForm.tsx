@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 
-export const AuthForm = () => {
+export const AuthForm = ({ callbackUrl = '/builder' }: { callbackUrl?: string }) => {
   const [loading, setLoading] = useState(false);
 
   const handleGoogleLogin = async () => {
     setLoading(true);
-    await signIn('google', { callbackUrl: '/builder' });
+    await signIn('google', { callbackUrl });
   };
 
   return (

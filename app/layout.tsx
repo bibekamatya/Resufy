@@ -5,6 +5,7 @@ import { AppHeader } from "@/components/ui/AppHeader";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "@/components/Providers";
+import { auth } from "@/lib/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -91,11 +92,18 @@ export const metadata: Metadata = {
   category: "technology",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+  const user = session?.user ? {
+    name: session.user.name || "",
+    email: session.user.email || "",
+    image: session.user.image || "",
+  } : null;
+
   return (
     <html lang="en">
       <body
@@ -103,7 +111,7 @@ export default function RootLayout({
       >
         <ErrorBoundary>
           <Providers>
-            <AppHeader />
+            <AppHeader user={user} />
             {children}
             <Toaster position="bottom-right" />
           </Providers>
