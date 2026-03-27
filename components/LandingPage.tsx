@@ -61,6 +61,7 @@ export function LandingPage() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50 text-gray-900">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <main>
 
       {/* Hero */}
       <section className="relative overflow-hidden">
@@ -244,6 +245,7 @@ export function LandingPage() {
         </div>
       </section>
 
+      </main>
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-12">
