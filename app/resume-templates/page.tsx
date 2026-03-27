@@ -2,17 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FileText, ArrowRight } from "lucide-react";
 
-const BASE_URL = "https://resufy.vercel.app";
-
 export const metadata: Metadata = {
   title: "Free Resume Templates (ATS-Friendly, Modern, Creative & More)",
   description:
     "Browse 6 free professional resume templates. ATS-friendly, modern, creative, simple, one-page, and fresher templates. Live preview and instant PDF download.",
-  alternates: { canonical: `${BASE_URL}/resume-templates` },
+  alternates: { canonical: "/resume-templates" },
   openGraph: {
     title: "Free Resume Templates | Resufy",
     description: "6 free professional resume templates. ATS-friendly, modern, creative, simple. Live preview & PDF export.",
-    url: `${BASE_URL}/resume-templates`,
+    url: "/resume-templates",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
@@ -38,6 +36,32 @@ const colorMap: Record<string, string> = {
 export default function ResumeTemplatesPage() {
   return (
     <div className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: "Resufy Resume Templates",
+            description:
+              "Browse 6 free professional resume templates on Resufy, including ATS-friendly, modern, creative, simple, one-page, and fresher templates.",
+            isPartOf: {
+              "@type": "WebSite",
+              name: "Resufy",
+              url: "https://resufy.vercel.app",
+            },
+            mainEntity: {
+              "@type": "ItemList",
+              itemListElement: templates.map((t, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                name: `${t.name} resume template`,
+                url: `https://resufy.vercel.app/resume-templates/${t.slug}`,
+              })),
+            },
+          }),
+        }}
+      />
       {/* Hero */}
       <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-white py-16 sm:py-24 text-center">
         <div className="mx-auto max-w-3xl px-4">
@@ -67,7 +91,7 @@ export default function ResumeTemplatesPage() {
                 <FileText className="h-6 w-6 text-white" />
               </div>
               <div className="flex items-center gap-2 mb-2">
-                <h2 className="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition-colors">{name} Template</h2>
+                <h3 className="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition-colors">{name} Template</h3>
                 <span className="text-[10px] font-medium px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full">{tag}</span>
               </div>
               <p className="text-sm text-gray-600 flex-1">{desc}</p>

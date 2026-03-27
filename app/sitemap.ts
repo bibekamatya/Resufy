@@ -12,5 +12,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/resume-templates/fresher`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE_URL}/resume-templates/creative`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE_URL}/resume-templates/one-page`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE_URL}/free-resume-builder-nepal`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE_URL}/resume-builder-no-watermark`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE_URL}/ats-resume-checker`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE_URL}/resume-builder-for-freshers-nepal`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE_URL}/ats-friendly-resume-template-nepal`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE_URL}/no-watermark-cv-builder-free`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
   ];
 }

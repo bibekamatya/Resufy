@@ -1,4 +1,5 @@
 import { FileText, Sparkles, Download, Eye, Zap, CheckCircle2, ArrowRight, Users } from "lucide-react";
+import Link from "next/link";
 import { sampleResumeData } from "@/lib/data";
 import { HeroCTA, CtaSectionButton } from "@/components/HeroCTA";
 import { LazyTemplatePreview } from "@/components/LazyTemplatePreview";
@@ -182,6 +183,28 @@ export function LandingPage() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* SEO Guides */}
+      <section className="mx-auto max-w-7xl px-4 pb-6 sm:pb-12">
+        <div className="mb-8 text-center">
+          <h2 className="mb-3 text-3xl font-bold">Popular Resume Guides</h2>
+          <p className="text-gray-600">Helpful pages targeting specific resume needs and job search intents.</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          <Link href="/resume-builder-for-freshers-nepal" className="rounded-xl border border-gray-200 bg-white p-5 hover:border-blue-400 hover:shadow-sm transition-all">
+            <h3 className="mb-1 font-semibold text-gray-900">Resume Builder for Freshers in Nepal</h3>
+            <p className="text-sm text-gray-600">Build a fresher resume for Nepal jobs with ATS-friendly format.</p>
+          </Link>
+          <Link href="/ats-friendly-resume-template-nepal" className="rounded-xl border border-gray-200 bg-white p-5 hover:border-blue-400 hover:shadow-sm transition-all">
+            <h3 className="mb-1 font-semibold text-gray-900">ATS-Friendly Resume Template Nepal</h3>
+            <p className="text-sm text-gray-600">Use a clean template suitable for Merojob and JobsNepal applications.</p>
+          </Link>
+          <Link href="/no-watermark-cv-builder-free" className="rounded-xl border border-gray-200 bg-white p-5 hover:border-blue-400 hover:shadow-sm transition-all">
+            <h3 className="mb-1 font-semibold text-gray-900">No Watermark CV Builder Free</h3>
+            <p className="text-sm text-gray-600">Download clean PDF/Word CV without paying or adding branding.</p>
+          </Link>
         </div>
       </section>
 

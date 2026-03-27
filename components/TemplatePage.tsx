@@ -81,9 +81,17 @@ export function TemplatePage({ config }: { config: TemplatePageConfig }) {
       {/* Breadcrumbs */}
       <nav aria-label="Breadcrumb" className="mx-auto max-w-7xl px-4 pt-4 pb-0">
         <ol className="flex items-center gap-1.5 text-xs text-gray-500">
-          <li><a href="/" className="hover:text-blue-600">Home</a></li>
+          <li>
+            <Link href="/" className="hover:text-blue-600">
+              Home
+            </Link>
+          </li>
           <li aria-hidden="true">/</li>
-          <li><a href="/resume-templates" className="hover:text-blue-600">Resume Templates</a></li>
+          <li>
+            <Link href="/resume-templates" className="hover:text-blue-600">
+              Resume Templates
+            </Link>
+          </li>
           <li aria-hidden="true">/</li>
           <li className="text-gray-900 font-medium truncate">{config.headline.split(" —")[0]}</li>
         </ol>
@@ -220,7 +228,7 @@ export function TemplatePage({ config }: { config: TemplatePageConfig }) {
       {/* Related Templates */}
       <section className="bg-gray-50 py-16">
         <div className="mx-auto max-w-4xl px-4">
-          <h2 className="mb-8 text-2xl font-bold">You Might Also Like</h2>
+          <h3 className="mb-8 text-2xl font-bold">You Might Also Like</h3>
           <div className="grid sm:grid-cols-3 gap-4">
             {config.relatedTemplates.map(({ name, slug, tag }) => (
               <Link
