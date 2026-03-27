@@ -36,6 +36,7 @@ export default function FresherTemplatePage() {
         subheadline:
           "No work experience? No problem. Our fresher resume template is designed to highlight your education, projects, internships, and skills — so you can land your first job with confidence.",
         whyTitle: "How to Write a Resume With No Experience",
+        directAnswer: "A fresher resume leads with education, academic projects, internships, and skills instead of work history. Recruiters hiring freshers look for potential and relevant skills — not years of experience. Use a clean ATS-friendly format with clear section headers so your resume reaches a human recruiter.",
         whyBody:
           "As a fresher, your resume needs a different strategy than an experienced professional. Instead of leading with work history, you lead with education, academic projects, internships, certifications, and skills. Recruiters hiring freshers know you don't have years of experience — they're looking for potential, learning ability, and relevant skills. Our fresher template is structured to put your strongest assets front and center, while the ATS-friendly format ensures your resume actually reaches a human recruiter.",
         features: [

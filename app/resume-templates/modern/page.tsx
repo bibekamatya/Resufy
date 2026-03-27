@@ -36,6 +36,7 @@ export default function ModernTemplatePage() {
         subheadline:
           "A clean two-column layout that balances visual appeal with readability. Perfect for professionals in tech, design, marketing, and business who want a contemporary look.",
         whyTitle: "Why Choose a Modern Resume Template?",
+        directAnswer: "A modern resume template uses a clean two-column layout that fits more content on one page without clutter. It signals professionalism and attention to detail to recruiters. Ideal for professionals with 3+ years of experience in tech, marketing, design, or business who want a contemporary, polished look.",
         whyBody:
           "A modern resume template signals to recruiters that you're current, professional, and detail-oriented. The two-column layout makes efficient use of space — fitting more information on one page without feeling cluttered. It's ideal for mid-to-senior professionals with 3+ years of experience who have enough content to fill both columns meaningfully. The clean typography and structured hierarchy make it easy for recruiters to scan in under 10 seconds.",
         features: [

@@ -36,6 +36,7 @@ export default function OnePageTemplatePage() {
         subheadline:
           "Recruiters prefer one-page resumes. Our balanced two-column layout fits your full work history, education, skills, and projects on a single page — without feeling cramped.",
         whyTitle: "Why One Page Resumes Win",
+        directAnswer: "A one-page resume is preferred by most recruiters for professionals with under 10 years of experience. It forces you to include only the most relevant information, respects the recruiter's time, and is easier to scan in the 7 seconds they spend on initial review. Use a space-efficient layout to fit everything cleanly.",
         whyBody:
           "Studies show that recruiters spend an average of 7 seconds on an initial resume scan. A one-page resume respects their time and forces you to include only what's most relevant — which is exactly what hiring managers want. Unless you have 10+ years of experience, a one-page resume is the industry standard. Our one-page template uses a balanced two-column layout to maximize space efficiency, fitting everything you need without sacrificing readability or ATS compatibility.",
         features: [

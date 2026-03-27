@@ -1,12 +1,7 @@
 import { FileText, Sparkles, Download, Eye, Zap, CheckCircle2, ArrowRight, Users } from "lucide-react";
-import { ClassicTemplate } from "@/components/templates/ClassicTemplate";
-import { ModernTemplate } from "@/components/templates/ModernTemplate";
-import { CreativeTemplate } from "@/components/templates/CreativeTemplate";
-import { CompactTemplate } from "@/components/templates/CompactTemplate";
-import { AcademicTemplate } from "@/components/templates/AcademicTemplate";
-import { BalancedTemplate } from "@/components/templates/BalancedTemplate";
 import { sampleResumeData } from "@/lib/data";
 import { HeroCTA, CtaSectionButton } from "@/components/HeroCTA";
+import { LazyTemplatePreview } from "@/components/LazyTemplatePreview";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -43,12 +38,12 @@ const features = [
 ];
 
 const templates = [
-  { name: "Classic", desc: "Traditional single-column", tag: "Most Popular", Template: ClassicTemplate, slug: "ats-friendly" },
-  { name: "Modern", desc: "Clean two-column", tag: "Clean", Template: ModernTemplate, slug: "modern" },
-  { name: "Creative", desc: "Bold color sidebar", tag: "Bold", Template: CreativeTemplate, slug: "creative" },
-  { name: "Compact", desc: "Space-efficient, one-page", tag: "Minimal", Template: CompactTemplate, slug: "simple" },
-  { name: "Academic", desc: "Formal, education-first", tag: "Formal", Template: AcademicTemplate, slug: "fresher" },
-  { name: "Balanced", desc: "Evenly distributed columns", tag: "Versatile", Template: BalancedTemplate, slug: "one-page" },
+  { name: "Classic", desc: "Traditional single-column", tag: "Most Popular", templateName: "ClassicTemplate" as const, slug: "ats-friendly" },
+  { name: "Modern", desc: "Clean two-column", tag: "Clean", templateName: "ModernTemplate" as const, slug: "modern" },
+  { name: "Creative", desc: "Bold color sidebar", tag: "Bold", templateName: "CreativeTemplate" as const, slug: "creative" },
+  { name: "Compact", desc: "Space-efficient, one-page", tag: "Minimal", templateName: "CompactTemplate" as const, slug: "simple" },
+  { name: "Academic", desc: "Formal, education-first", tag: "Formal", templateName: "AcademicTemplate" as const, slug: "fresher" },
+  { name: "Balanced", desc: "Evenly distributed columns", tag: "Versatile", templateName: "BalancedTemplate" as const, slug: "one-page" },
 ];
 
 const faqs = [
@@ -171,14 +166,11 @@ export function LandingPage() {
           </a>
         </div>
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {templates.map(({ name, desc, tag, Template, slug }) => (
+          {templates.map(({ name, desc, tag, templateName, slug }) => (
             <div key={name} className="group relative snap-start shrink-0 w-48 overflow-hidden rounded-xl border-2 border-gray-200 bg-white text-left transition-all hover:border-blue-500 hover:shadow-xl">
-              {/* Full-card link overlay — sits on top, no nesting issue */}
               <a href={`/resume-templates/${slug}`} className="absolute inset-0 z-10" aria-label={`${name} resume template`} />
               <div className="overflow-hidden relative border-b border-gray-100 bg-white" style={{ paddingBottom: "130%" }}>
-                <div className="pointer-events-none absolute inset-0" style={{ transform: "scale(0.245)", transformOrigin: "top left", width: "408%", height: "408%" }}>
-                  <Template data={sampleResumeData} />
-                </div>
+                <LazyTemplatePreview templateName={templateName} />
                 <div className="absolute inset-0 bg-transparent group-hover:bg-blue-500/5 transition-colors" />
               </div>
               <div className="p-3">
@@ -243,6 +235,17 @@ export function LandingPage() {
               <p className="mb-4 text-sm text-gray-600">
                 Free resume builder helping job seekers create ATS-friendly resumes and land more interviews.
               </p>
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-xs font-bold text-white">B</div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">Bibek Amatya</p>
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <a href="https://github.com/bibekamatya" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">GitHub</a>
+                    <span>·</span>
+                    <a href="https://linkedin.com/in/bibekamatya" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">LinkedIn</a>
+                  </div>
+                </div>
+              </div>
               <p className="hidden md:block text-sm text-gray-500">© 2026 Resufy. Made with ❤️ by Bibek Amatya</p>
             </div>
             <div>

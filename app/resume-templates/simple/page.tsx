@@ -36,6 +36,7 @@ export default function SimpleTemplatePage() {
         subheadline:
           "Sometimes less is more. Our simple resume template strips away the noise and lets your experience speak for itself. Clean, minimal, and universally professional.",
         whyTitle: "Why a Simple Resume Template Works",
+        directAnswer: "A simple resume template uses a minimal one-page layout with no tables, columns, or graphics. It has the highest ATS pass rate of any format, works for every industry and experience level, and lets your content speak for itself. Recruiters spend 7 seconds scanning — simplicity wins.",
         whyBody:
           "Recruiters spend an average of 7 seconds scanning a resume. A simple, uncluttered layout makes those 7 seconds count. There's no visual noise competing for attention — just your name, your experience, and your skills, presented clearly. Simple templates also have the highest ATS pass rates, work for every industry, and print perfectly. Whether you're a student, a career changer, or a seasoned professional, a simple resume is never the wrong choice.",
         features: [

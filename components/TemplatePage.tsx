@@ -29,6 +29,7 @@ export interface TemplatePageConfig {
   slug: string;
   headline: string;
   subheadline: string;
+  directAnswer: string;
   whyTitle: string;
   whyBody: string;
   features: { title: string; desc: string }[];
@@ -53,14 +54,40 @@ export function TemplatePage({ config }: { config: TemplatePageConfig }) {
     }
   };
 
-  if (showAuth) return <AuthForm callbackUrl={`/resume?template=${config.template}`} />;
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://resufy.vercel.app" },
+      { "@type": "ListItem", position: 2, name: "Resume Templates", item: "https://resufy.vercel.app/resume-templates" },
+      { "@type": "ListItem", position: 3, name: config.headline, item: `https://resufy.vercel.app/resume-templates/${config.slug}` },
+    ],
+  };
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(config.jsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(config.jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+
+      {/* Auth modal */}
+      {showAuth && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={() => setShowAuth(false)}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <AuthForm callbackUrl={`/resume?template=${config.template}`} />
+          </div>
+        </div>
+      )}
+
+      {/* Breadcrumbs */}
+      <nav aria-label="Breadcrumb" className="mx-auto max-w-7xl px-4 pt-4 pb-0">
+        <ol className="flex items-center gap-1.5 text-xs text-gray-500">
+          <li><a href="/" className="hover:text-blue-600">Home</a></li>
+          <li aria-hidden="true">/</li>
+          <li><a href="/resume-templates" className="hover:text-blue-600">Resume Templates</a></li>
+          <li aria-hidden="true">/</li>
+          <li className="text-gray-900 font-medium truncate">{config.headline.split(" —")[0]}</li>
+        </ol>
+      </nav>
 
       {/* Hero */}
       <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-white py-16 sm:py-24">
@@ -123,6 +150,10 @@ export function TemplatePage({ config }: { config: TemplatePageConfig }) {
       {/* Why This Template */}
       <section className="mx-auto max-w-4xl px-4 py-16">
         <h2 className="mb-4 text-3xl font-bold">{config.whyTitle}</h2>
+        {/* Direct answer block — 40-60 words for AI/GEO citation */}
+        <div className="mb-6 rounded-xl border-l-4 border-blue-500 bg-blue-50 px-5 py-4">
+          <p className="text-gray-800 leading-relaxed font-medium">{config.directAnswer}</p>
+        </div>
         <p className="text-gray-600 leading-relaxed text-lg mb-10">{config.whyBody}</p>
 
         <h3 className="mb-6 text-xl font-bold">Key Features</h3>

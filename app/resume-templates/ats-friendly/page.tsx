@@ -37,6 +37,7 @@ export default function ATSFriendlyPage() {
         subheadline:
           "Beat the bots and get noticed by recruiters. Our ATS-optimized template uses a clean, single-column layout that guarantees your application passes automated tracking systems.",
         whyTitle: "Why You Need an ATS-Friendly Resume",
+        directAnswer: "An ATS-friendly resume uses a single-column layout, standard fonts, and clear section headers like Work Experience, Education, and Skills. It avoids tables, columns, and graphics that confuse applicant tracking software. Over 75% of large companies use ATS to filter resumes — a properly formatted resume ensures yours reaches a human recruiter.",
         whyBody:
           "Over 75% of large companies use Applicant Tracking Systems (ATS) to filter resumes before a human ever sees them. Fancy multi-column layouts, tables, and graphics confuse ATS software — causing your resume to be rejected automatically, even if you're the perfect candidate. Our ATS-friendly template is built with a clean single-column structure, standard section headers, and readable fonts that every ATS can parse correctly. More passes = more interviews.",
         features: [

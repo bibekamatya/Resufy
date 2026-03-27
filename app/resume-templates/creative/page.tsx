@@ -36,6 +36,7 @@ export default function CreativeTemplatePage() {
         subheadline:
           "Make a memorable first impression. Our creative resume template uses a striking sidebar design with color accents — ideal for designers, marketers, content creators, and anyone in a creative field.",
         whyTitle: "When to Use a Creative Resume Template",
+        directAnswer: "A creative resume template is best for designers, marketers, content creators, and creative professionals where visual communication is valued. It uses a bold sidebar design with color accents to stand out. Note: creative templates may not pass all ATS systems — use for direct applications or smaller companies.",
         whyBody:
           "A creative resume template is the right choice when the job itself values creativity and visual communication — think graphic design, UX/UI, marketing, advertising, content creation, photography, or architecture. In these fields, your resume is also a portfolio piece. A visually distinctive layout signals that you understand design principles and can communicate visually. However, be aware that creative templates may not pass all ATS systems — if you're applying through an online portal at a large company, consider pairing this with our ATS-friendly version.",
         features: [
