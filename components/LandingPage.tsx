@@ -9,7 +9,7 @@ const jsonLd = {
   "@type": "WebApplication",
   name: "Resufy",
   url: "https://resufy.vercel.app",
-  description: "Free online resume builder with ATS-friendly templates, live preview, PDF & Word export, and real-time ATS scoring.",
+  description: "Free online resume maker with ATS-friendly templates, live preview, PDF & Word export, and real-time ATS scoring.",
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
@@ -72,14 +72,14 @@ export function LandingPage() {
             <span>Free Forever • No Credit Card Required</span>
           </div>
           <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight sm:text-6xl lg:text-7xl">
-            Free Resume Builder —
+            Free Resume Maker —
             <br />
             <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              ATS-Friendly & Ready in Minutes
+              Create Your Resume in Minutes
             </span>
           </h1>
           <p className="mx-auto mb-10 max-w-2xl text-lg text-gray-600 sm:text-xl">
-            Build a professional, ATS-optimized resume with live preview, 6 templates, and instant PDF or Word export. 100% free — no credit card, no watermark.
+            Create a professional resume for free — pick a template, fill in your details, and download as PDF or Word. No credit card, no watermark, no complicated steps.
           </p>
           <HeroCTA />
         </div>
@@ -107,9 +107,9 @@ export function LandingPage() {
       {/* Features */}
       <section id="features" className="mx-auto max-w-7xl px-4 py-20 sm:py-32">
         <div className="mb-16 text-center">
-          <h2 className="mb-4 text-4xl font-bold">Everything You Need to Build a Winning Resume</h2>
+          <h2 className="mb-4 text-4xl font-bold">Everything You Need to Create a Great Resume</h2>
           <p className="mx-auto max-w-2xl text-lg text-gray-600">
-            Resufy gives you the tools to create a resume that passes ATS scanners and impresses recruiters.
+            Resufy gives you free templates and simple tools to make a resume that gets noticed by recruiters.
           </p>
         </div>
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -132,14 +132,14 @@ export function LandingPage() {
       <section id="how-it-works" className="bg-gradient-to-b from-gray-50 to-white py-20 sm:py-32">
         <div className="mx-auto max-w-7xl px-4">
           <div className="mb-16 text-center">
-            <h2 className="mb-4 text-4xl font-bold">How to Build a Resume in 3 Steps</h2>
-            <p className="mx-auto max-w-2xl text-lg text-gray-600">From blank page to job-ready resume in minutes</p>
+            <h2 className="mb-4 text-4xl font-bold">How to Make a Resume in 3 Easy Steps</h2>
+            <p className="mx-auto max-w-2xl text-lg text-gray-600">From blank page to job-ready resume in minutes — no experience needed</p>
           </div>
           <div className="grid gap-12 md:grid-cols-3">
             {[
-              { n: "1", color: "from-blue-500 to-blue-600 shadow-blue-500/40", title: "Enter Your Details", desc: "Fill in your work experience, education, skills, and projects using our structured form editor." },
-              { n: "2", color: "from-indigo-500 to-indigo-600 shadow-indigo-500/40", title: "Pick an ATS-Friendly Template", desc: "Choose from 6 professional templates — Classic, Modern, Creative, Compact, Academic, or Balanced." },
-              { n: "3", color: "from-purple-500 to-purple-600 shadow-purple-500/40", title: "Download as PDF or Word", desc: "Export your finished resume as a PDF or .docx file instantly. No watermark, no cost." },
+              { n: "1", color: "from-blue-500 to-blue-600 shadow-blue-500/40", title: "Type In Your Info", desc: "Add your name, school or work experience, skills, and projects. It's like filling out a simple form." },
+              { n: "2", color: "from-indigo-500 to-indigo-600 shadow-indigo-500/40", title: "Pick a Free Template", desc: "Choose from 6 free resume templates — Classic, Modern, Creative, Compact, Academic, or Balanced." },
+              { n: "3", color: "from-purple-500 to-purple-600 shadow-purple-500/40", title: "Download as PDF or Word", desc: "Save your resume as a PDF or Word file for free. No watermark, no hidden cost." },
             ].map(({ n, color, title, desc }) => (
               <div key={n} className="relative text-center">
                 <div className="mb-6 flex justify-center">
@@ -160,7 +160,7 @@ export function LandingPage() {
         <div className="mb-16 text-center">
           <h2 className="mb-4 text-4xl font-bold">Free Resume Templates for Every Job</h2>
           <p className="mx-auto max-w-2xl text-lg text-gray-600">
-            6 ATS-friendly templates built for real-world hiring — classic, modern, creative, and more
+            6 free resume templates — simple, modern, creative, and more. Pick one and start filling it in.
           </p>
           <a href="/resume-templates" className="inline-flex items-center gap-1 mt-4 text-sm font-medium text-blue-600 hover:underline">
             View all templates <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -190,7 +190,7 @@ export function LandingPage() {
       <section className="mx-auto max-w-7xl px-4 pb-6 sm:pb-12">
         <div className="mb-8 text-center">
           <h2 className="mb-3 text-3xl font-bold">Popular Resume Guides</h2>
-          <p className="text-gray-600">Helpful pages targeting specific resume needs and job search intents.</p>
+          <p className="text-gray-600">Helpful guides for students, freshers, and first-time job seekers.</p>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           <Link href="/resume-builder-for-freshers-nepal" className="rounded-xl border border-gray-200 bg-white p-5 hover:border-blue-400 hover:shadow-sm transition-all">
@@ -233,11 +233,11 @@ export function LandingPage() {
           <div className="absolute inset-0 bg-grid-pattern opacity-10" />
           <div className="relative">
             <h2 className="mb-4 font-bold text-white">
-              <span className="block text-2xl sm:hidden">Build Your Resume Free</span>
-              <span className="hidden sm:block text-4xl lg:text-5xl">Build Your Resume Free — Land More Interviews</span>
+              <span className="block text-2xl sm:hidden">Create Your Resume Free</span>
+              <span className="hidden sm:block text-4xl lg:text-5xl">Create Your Resume Free — Get More Interviews</span>
             </h2>
             <p className="mb-8 text-lg text-blue-100 sm:text-xl">
-              ATS-optimized templates, live preview, and instant PDF export. No credit card needed.
+              Free templates, live preview, and instant PDF download. No credit card needed.
             </p>
             <CtaSectionButton />
           </div>
@@ -256,7 +256,7 @@ export function LandingPage() {
                 <span className="text-xl font-bold text-gray-900">Resufy</span>
               </div>
               <p className="mb-4 text-sm text-gray-600">
-                Free resume builder helping job seekers create ATS-friendly resumes and land more interviews.
+                Free resume maker helping students and job seekers create professional resumes and get more interviews.
               </p>
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-xs font-bold text-white">B</div>

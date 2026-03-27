@@ -76,7 +76,7 @@ export default function NoWatermarkCvBuilderFreePage() {
           </p>
           <Link href="/builder" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-7 py-3 text-white font-semibold">
             <FileText className="h-5 w-5" />
-            Start Building Free
+            Create Resume Free
           </Link>
         </div>
       </section>

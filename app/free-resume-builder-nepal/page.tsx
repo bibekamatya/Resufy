@@ -71,7 +71,7 @@ export default function FreeResumeBuilderNepalPage() {
             className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-xl shadow-blue-500/30 hover:shadow-2xl transition-all text-lg"
           >
             <FileText className="h-5 w-5" />
-            Build Your Resume Free
+            Create My Resume Free
           </Link>
           <div className="mt-6 flex flex-wrap justify-center gap-4 text-sm text-gray-500">
             {["100% Free", "No Watermark", "ATS-Friendly", "PDF & Word Export"].map((t) => (
@@ -153,11 +153,11 @@ export default function FreeResumeBuilderNepalPage() {
 
         {/* CTA */}
         <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 p-8 text-center text-white">
-          <h2 className="mb-2 text-2xl font-bold">Ready to Build Your Resume?</h2>
+          <h2 className="mb-2 text-2xl font-bold">Ready to Create Your Resume?</h2>
           <p className="mb-6 text-blue-100">Free, no watermark, no credit card. Download as PDF in seconds.</p>
           <Link href="/builder" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg shadow-lg hover:bg-gray-50 transition-all">
             <FileText className="h-4 w-4" />
-            Start Building Free
+            Create Resume Free
           </Link>
         </div>
       </section>
