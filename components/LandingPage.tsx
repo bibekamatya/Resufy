@@ -72,7 +72,7 @@ export function LandingPage() {
             <span>Free Forever • No Credit Card Required</span>
           </div>
           <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight sm:text-6xl lg:text-7xl">
-            Free Resume Maker —
+            Free Resume Maker
             <br />
             <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
               Create Your Resume in Minutes
