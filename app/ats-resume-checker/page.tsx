@@ -19,11 +19,12 @@ export const metadata: Metadata = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
+  "@type": "SoftwareApplication",
   name: "Resufy ATS Resume Checker",
   url: `${BASE_URL}/ats-resume-checker`,
   description: "Free real-time ATS resume checker that scores your resume on keyword density, formatting, completeness, and ATS compatibility.",
   applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
   featureList: ["Real-time ATS score", "Keyword suggestions", "Formatting analysis", "Completeness check"],
 };

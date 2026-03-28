@@ -1,15 +1,14 @@
-import { FileText, Sparkles, Download, Eye, Zap, CheckCircle2, ArrowRight, Users } from "lucide-react";
+import { FileText, Sparkles, Download, Eye, Zap, ArrowRight, Users } from "lucide-react";
 import Link from "next/link";
-import { sampleResumeData } from "@/lib/data";
 import { HeroCTA, CtaSectionButton } from "@/components/HeroCTA";
 import { LazyTemplatePreview } from "@/components/LazyTemplatePreview";
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
+  "@type": "SoftwareApplication",
   name: "Resufy",
   url: "https://resufy.vercel.app",
-  description: "Free online resume maker with ATS-friendly templates, live preview, PDF & Word export, and real-time ATS scoring.",
+  description: "Free resume maker to create ATS-friendly resumes in minutes. No watermark, no credit card required. with ATS-friendly templates, live preview, PDF & Word export, and real-time ATS scoring.",
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },

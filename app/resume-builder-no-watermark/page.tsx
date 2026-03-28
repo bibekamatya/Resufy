@@ -19,11 +19,12 @@ export const metadata: Metadata = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
+  "@type": "SoftwareApplication",
   name: "Resufy — Resume Builder Without Watermark",
   url: `${BASE_URL}/resume-builder-no-watermark`,
   description: "Free resume builder that exports clean PDF and Word files with no watermark, no branding, and no subscription required.",
   applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
 };
 

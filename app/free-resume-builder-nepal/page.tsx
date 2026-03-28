@@ -19,11 +19,12 @@ export const metadata: Metadata = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
+  "@type": "SoftwareApplication",
   name: "Resufy — Free Resume Builder for Nepal",
   url: `${BASE_URL}/free-resume-builder-nepal`,
   description: "Free resume builder for Nepal job seekers. ATS-friendly templates, PDF and Word export, real-time ATS scoring.",
   applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
   offers: { "@type": "Offer", price: "0", priceCurrency: "NPR" },
   areaServed: { "@type": "Country", name: "Nepal" },
 };
